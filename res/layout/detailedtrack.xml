@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" 
+    android:background="#0099cc">
+
+    <RelativeLayout
+        android:id="@+id/topbar"
+        android:layout_width="wrap_content"
+        android:layout_height="35dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="false"
+        android:background="@drawable/btn_default"
+        android:visibility="gone" >
+
+        <Button
+            android:id="@+id/previous"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="75dp"
+            android:layout_height="50dp"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+            android:background="@drawable/previousbutton"
+            android:onClick="onprevious"
+            android:text="@string/previous"
+            android:textColor="#000" />
+
+        <Button
+            android:id="@+id/next"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="75dp"
+            android:layout_height="50dp"
+            android:layout_alignBaseline="@+id/previous"
+            android:layout_alignBottom="@+id/previous"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/nextbutton"
+            android:onClick="onnext"
+            android:text="@string/next"
+            android:textColor="#000" />
+
+        <TextView
+            android:id="@+id/toptitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/next"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:text="Time"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="#000" />
+
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/phrase"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_below="@+id/topbar"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="28dp"
+        android:gravity="center_horizontal"
+        android:maxWidth="250dp"
+        android:scrollHorizontally="false"
+        android:singleLine="false"
+        android:text="Large Text"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textSize="25sp" />
+
+    <ImageButton
+        android:id="@+id/play"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/phrase"
+        android:layout_marginLeft="52dp"
+        android:layout_marginTop="24dp"
+        android:background="@drawable/buttonstyle"
+        android:onClick="startplay"
+        android:src="@drawable/play" />
+
+    <ImageButton
+        android:id="@+id/speech"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignBottom="@+id/play"
+        android:layout_alignParentRight="true"
+        android:layout_alignTop="@+id/play"
+        android:layout_marginRight="64dp"
+        android:background="@drawable/buttonstyle"
+        android:onClick="startspeech"
+        android:src="@drawable/speech" />
+
+    <RelativeLayout
+        android:id="@+id/resultwindow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="false"
+        android:layout_below="@+id/play"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/btn_default"
+        android:visibility="gone" >
+
+        <RatingBar
+            android:id="@+id/resultrating"
+            style="?android:attr/ratingBarStyleIndicator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/resulttext"
+            android:isIndicator="true"
+            android:numStars="5"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/resulttext"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/resultrating"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="5dp"
+            android:text="TextView"
+            android:scrollHorizontally="false"
+            android:textColor="#000" />
+
+    </RelativeLayout>
+
+    <ImageButton
+        android:id="@+id/buttonprevious"
+        android:layout_width="35dp"
+        android:layout_height="100dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignTop="@+id/buttonnext"
+        android:onClick="previoustrack"
+        android:src="@drawable/previous" />
+
+    <ImageButton
+        android:id="@+id/buttonnext"
+        android:layout_width="35dp"
+        android:layout_height="100dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignTop="@+id/phrase"
+        android:onClick="nexttrack"
+        android:src="@drawable/next" />
+
+</RelativeLayout>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">TT</string>
+    <string name="action_settings">Settings</string>
+    <string name="dummy_button">Scores</string>
+    <string name="empty"></string>
+    <string name="previous">Prev</string>
+    <string name="next">Next</string>
+    <string name="welcometext">Welcome to Toung Twister application \\n This must be your first, please enter your name</string>
+
+</resources>
