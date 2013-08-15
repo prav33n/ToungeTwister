@@ -24,7 +24,7 @@
             android:layout_centerVertical="true"
             android:layout_marginLeft="10dp"
             android:background="@drawable/previousbutton"
-            android:onClick="onprevious"
+            android:onClick="previoustrack"
             android:text="@string/previous"
             android:textColor="#000" />
 
@@ -38,7 +38,7 @@
             android:layout_alignParentRight="true"
             android:layout_marginRight="10dp"
             android:background="@drawable/nextbutton"
-            android:onClick="onnext"
+            android:onClick="nexttrack"
             android:text="@string/next"
             android:textColor="#000" />
 
@@ -120,14 +120,26 @@
 
         <TextView
             android:id="@+id/resulttext"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignLeft="@+id/resultrating"
             android:layout_alignParentTop="true"
             android:layout_marginLeft="5dp"
-            android:text="TextView"
             android:scrollHorizontally="false"
+            android:text="TextView"
             android:textColor="#000" />
+
+        <Button
+            android:id="@+id/viewscore"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/resulttext"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="16dp"
+            android:minHeight="30dip"
+            android:onClick="viewscore"
+            android:text="View Scores" />
 
     </RelativeLayout>
 

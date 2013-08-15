@@ -31,13 +31,13 @@ public class Tracklist extends FragmentActivity implements LoaderManager.LoaderC
 		ListView list = (ListView)findViewById(R.id.tttracklist);
 		Bundle extra = getIntent().getExtras();
 		nodeid = Integer.parseInt(extra.getString("nodeid"));
-		bs.query = "select  _id,phrase,length,updated from phrase  where _id in (select nodeid from tracknode where trackid = "+nodeid+");";
+		bs.query = "select  _id,Phrase,Length,Updated,Completed from phrase  where _id in (select nodeid from tracknode where trackid = "+nodeid+");";
 		bs.projection = new String[] {"_id", "phrase","updated"};  
 	    ContentResolver cr = getContentResolver();
-		getSupportLoaderManager().initLoader(bs.LOADER_ID, null,this);
+		getSupportLoaderManager().initLoader(Baseclass.LOADER_ID, null,this);
 		  bs.mAdapter = new SimpleCursorAdapter(this,
 	              R.layout.tracklist, null,
-	              new String[] {"Phrase","Updated" },
+	              new String[] {"Phrase","Completed" },
 	              new int[] { R.id.trackphrase,R.id.completed }, 0);
 		  list.setAdapter(bs.mAdapter);
 		  //ContentResolver cr = getContentResolver();
@@ -79,10 +79,14 @@ public class Tracklist extends FragmentActivity implements LoaderManager.LoaderC
 		    	        else*/ 
 		    	        tv.setText(cur.getString(cur.getColumnIndex("Phrase")));
 		    	        tv.setTag(nodeid); }
-	    		   else if(columnIndex==cur.getColumnIndex("Updated")){
-		    	        	CheckBox ch = (CheckBox)view.findViewById(R.id.completed);
-		    	        	ch.setChecked(true);
-		    	        	ch.setClickable(false);}
+	    		   else if(columnIndex==cur.getColumnIndex("Completed")){
+	    			   CheckBox ch = (CheckBox)view.findViewById(R.id.completed);
+	    			   if(cur.getInt(columnIndex)==0)
+		    	        	ch.setChecked(false);
+	    			   else 
+	    				   ch.setChecked(true);
+		    	       ch.setClickable(false);
+		    	       }
 	    	   	return true;
 	    	    }
 		 });

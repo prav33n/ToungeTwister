@@ -1,7 +1,23 @@
 package com.tt;
 
+import java.io.IOException;
+import java.io.InputStream;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
+import org.json.JSONObject;
+
 import android.app.Activity;
+import android.content.Context;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,21 +29,24 @@ import android.support.v4.widget.SimpleCursorAdapter;
 
 public class Baseclass extends Activity implements LoaderManager.LoaderCallbacks<Cursor> {
 	SimpleCursorAdapter mAdapter;
-	 protected static final int LOADER_ID = 1;
-	 String[] projection;
-	 String query;
+	protected static final int LOADER_ID = 1;
+	public static int userid;
+	public static boolean connectionstatus;
+	public static byte[] bytearray = new byte[100000];
 	public static final Uri CONTENT_URI =  Uri.parse("content://com.TT.provider/");
-	 public static final Uri CONTENT_URIASR =  Uri.parse("content://com.TT.provider/ASRResult");
-	 public static final Uri CONTENT_URIAttempt =  Uri.parse("content://com.TT.provider/attempt");
-	 public static final Uri CONTENT_URIPhrase =  Uri.parse("content://com.TT.provider/phrase");
-	 public static final Uri CONTENT_URIUser =  Uri.parse("content://com.TT.provider/user");
-	
+	public static final Uri CONTENT_URIASR =  Uri.parse("content://com.TT.provider/ASRResult");
+	public static final Uri CONTENT_URIAttempt =  Uri.parse("content://com.TT.provider/attempt");
+	public static final Uri CONTENT_URIPhrase =  Uri.parse("content://com.TT.provider/phrase");
+	public static final Uri CONTENT_URIUser =  Uri.parse("content://com.TT.provider/user");
+	String[] projection;
+	String query;
+
 	@Override
 	public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
 		// TODO Auto-generated method stub
-		Log.e("loader","created");
-		  CursorLoader cursorLoader = new CursorLoader(this,CONTENT_URI, projection, query, null, null);
-				  return cursorLoader;
+		CursorLoader cursorLoader = new CursorLoader(this,CONTENT_URI, projection, query, null, null);
+		return cursorLoader;
+
 		//return null;
 	}
 
@@ -35,16 +54,16 @@ public class Baseclass extends Activity implements LoaderManager.LoaderCallbacks
 	public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
 		// TODO Auto-generated method stub
 		switch (loader.getId()) {
-	      case LOADER_ID:
-	    	  Log.e("loader","swaped"+cursor.getCount());
-	        // The asynchronous load is complete and the data
-	        // is now available for use. Only now can we associate
-	        // the queried Cursor with the SimpleCursorAdapter.
-	        mAdapter.swapCursor(cursor);
-	        break;
-	    }
+		case LOADER_ID:
+			Log.e("loader","swaped"+cursor.getCount());
+			// The asynchronous load is complete and the data
+			// is now available for use. Only now can we associate
+			// the queried Cursor with the SimpleCursorAdapter.
+			mAdapter.swapCursor(cursor);
+			break;
+		}
 
-		
+
 	}
 
 	@Override
@@ -53,6 +72,36 @@ public class Baseclass extends Activity implements LoaderManager.LoaderCallbacks
 		mAdapter.swapCursor(null);
 	}
 
-		
+	public static InputStream httpclient(String URL,JSONObject json){
+		InputStream is= null;
+		HttpParams httpParameters = new BasicHttpParams();   //set connection parameters
+		HttpConnectionParams.setConnectionTimeout(httpParameters, 10000);
+		HttpConnectionParams.setSoTimeout(httpParameters, 10000);
+		HttpClient httpclient = new DefaultHttpClient(httpParameters);
+		HttpResponse response= null;
+		HttpPost httppost = new HttpPost(URL);	
+		httppost.setHeader("json",json.toString());
+		httppost.getParams().setParameter("jsonpost",json);
+		try {
+			//StringEntity se = new StringEntity(postdata.toString());
+			//se.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
+			//httppost.setEntity(se);
+			response = httpclient.execute(httppost);
+			HttpEntity entity = response.getEntity();
+			is = entity.getContent();
+		} catch (ClientProtocolException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+
+		return is;
+	}
+
+
+
 
 }

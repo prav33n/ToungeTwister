@@ -49,14 +49,14 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
         public static final int speech=0x7f02000e;
     }
     public static final class id {
-        public static final int TTlist=0x7f09000d;
-        public static final int TTtrackname=0x7f09000c;
-        public static final int action_settings=0x7f090015;
-        public static final int buttonnext=0x7f09000b;
-        public static final int buttonprevious=0x7f09000a;
-        public static final int completed=0x7f090014;
-        public static final int dummy_button=0x7f09000e;
-        public static final int introtext=0x7f09000f;
+        public static final int TTlist=0x7f09000e;
+        public static final int TTtrackname=0x7f09000d;
+        public static final int action_settings=0x7f090016;
+        public static final int buttonnext=0x7f09000c;
+        public static final int buttonprevious=0x7f09000b;
+        public static final int completed=0x7f090015;
+        public static final int dummy_button=0x7f09000f;
+        public static final int introtext=0x7f090010;
         public static final int next=0x7f090002;
         public static final int phrase=0x7f090004;
         public static final int play=0x7f090005;
@@ -64,13 +64,14 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
         public static final int resultrating=0x7f090008;
         public static final int resulttext=0x7f090009;
         public static final int resultwindow=0x7f090007;
-        public static final int scoreview=0x7f090011;
+        public static final int scoreview=0x7f090012;
         public static final int speech=0x7f090006;
         public static final int topbar=0x7f090000;
         public static final int toptitle=0x7f090003;
-        public static final int trackphrase=0x7f090013;
-        public static final int tttracklist=0x7f090012;
-        public static final int username=0x7f090010;
+        public static final int trackphrase=0x7f090014;
+        public static final int tttracklist=0x7f090013;
+        public static final int username=0x7f090011;
+        public static final int viewscore=0x7f09000a;
     }
     public static final class layout {
         public static final int detailedtrack=0x7f030000;
