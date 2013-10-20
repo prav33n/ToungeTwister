@@ -1,44 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" 
-    android:background="#0099cc">
+    android:layout_height="match_parent"
+    android:background="@drawable/hdpi_bg" >
+
+    <include
+        android:id="@+id/header_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        layout="@layout/listheader" />
 
     <ListView
         android:id="@+id/tttracklist"
+        style="@style/ListViewAppTheme"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_above="@+id/footer_layout"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
+        android:layout_below="@+id/header_layout"
+        android:dividerHeight="3dp"
+        android:drawSelectorOnTop="true"
+        android:footerDividersEnabled="true"
+        android:headerDividersEnabled="true"
         android:visibility="visible" >
-
     </ListView>
 
-    <TextView
-        android:id="@+id/trackphrase"
-        android:layout_width="wrap_content"
+    <include
+        android:id="@+id/footer_layout"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginBottom="10dp"
-        android:layout_marginLeft="61dp"
-        android:layout_marginTop="5dp"
-        android:clickable="true"
-        android:onClick="showdetailedtrack"
-        android:padding="3dp"
-        android:text="Medium Text"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textSize="20sp" />
-
-    <CheckBox
-        android:id="@+id/completed"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/trackphrase"
-        android:layout_alignBottom="@+id/trackphrase"
-        android:layout_alignParentLeft="true"
-        android:layout_marginLeft="15dp"
-        android:text="@string/empty" />
+        android:layout_alignParentBottom="true"
+        layout="@layout/listfooter" />
 
 </RelativeLayout>

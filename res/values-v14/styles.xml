@@ -23,8 +23,6 @@
         <item name="android:textSize">18sp</item>          
         <item name="android:listViewStyle">@style/TransparentListView</item>
         <item name="android:expandableListViewStyle">@style/TransparentExpandableListView</item>
-        <item name="buttonBarStyle">@style/ButtonBar</item>
-        <item name="buttonBarButtonStyle">@style/ButtonBarButton</item> 
     </style>
     
 <style name="TransparentListView" parent="@android:style/Widget.ListView">

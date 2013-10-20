@@ -1,5 +1,6 @@
 <resources>
 
     <color name="black_overlay">#66000000</color>
-
+    <color name="mild_blue">#66CCFF</color>
+ <color name="transparent">@android:color/transparent</color>
 </resources>

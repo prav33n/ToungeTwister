@@ -1,13 +1,106 @@
 package com.tt;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import android.R.string;
+import android.app.Activity;
+import android.content.Context;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import android.widget.ImageView;
+import android.widget.ListAdapter;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+
+class Scorecalc extends BaseAdapter implements ListAdapter {
+
+    private final Activity activity;
+    private final JSONArray jsonArray;
+    public Scorecalc (Activity activity, JSONArray jsonArray) {
+       // assert activity != null;
+     //   assert jsonArray != null;
+        this.jsonArray = jsonArray;
+        this.activity = activity;
+    }
 
 
-public class Scorecalc {
-public static String[] homophones = {"flay|fley ","hay|hey ","j|jay ","k|kay ","lay|lei ","nay|nã©e ","neigh|nã©e ","pray|prey ","ray|re ","slay|sleigh ","tray|trey ","way|weigh ","patience|patients ","to pay|toupee ","ade|aide ","aid|aide ","braid|brayed ","grade|greyed ","grayed|greyed ","lade|laid ","made|maid ","raid|rayed ","spade|spayed ","trade|trayed ","wade|waid ","waid|weighed ","brake|break ","stake|steak ","ail|ale ","bail|bale ","gale|gayle ","gail|gayle ","hail|hale ","mail|male ","pail|pale ","sail|sale ","tail|tale ","vale|veil ","vail|veil ","wale|whale ","wail|whale ","wails|wales ","brain|brane ","fain|feign ","fane|feign ","lain|lane ","main|maine ","maine|mane ","maine|mein ","pain|pane ","plain|plane ","rain|rein ","reign|rein ","vain|vein ","vane|vein ","faint|feint ","base|bass ","place|plaice ","waist|waste ","acclamation|acclimation ","bait|bate ","gait|gate ","grate|great ","plait|plate ","straight|strait ","wait|weight ","naval|navel ","waive|wave ","waiver|waver ","days|daze ","faze|phase ","frays|phrase ","gay's|gaze ","graze|greys ","grays|greys ","haze|heys ","hay's|heys ","hays|heys ","hayes|heys ","heighs|heys ","lais|leis ","lase|leis ","lays|leis ","laze|leis ","leas|leis ","leis|leys ","maize|may's ","may's|maze ","may's|mays ","praise|preys ","prays|preys ","raise|ray's ","ray's|raze ","ray's|rays ","slays|sleighs ","aerial|ariel ","areal|ariel ","eyre|heir ","air|eyre ","ere|eyre ","err|eyre ","ayre|eyre ","are|eyre ","ayr|eyre ","e'er|eyre ","errs|heirs ","airs|errs ","bare|bear ","fair|fare ","flair|flare ","hair|hare ","pair|pare ","pare|pear ","stair|stare ","tare|tear ","there|they're ","their|they're ","theirs|there's ","wear|weir ","ware|weir ","b|be ","b|bee ","d|dee ","e|ee ","flea|flee ","g|gee ","cay|quai ","key|quai ","quai|quay ","me|mi ","c|si ","c|see ","c|sea ","c|cee ","p|pea ","p|pee ","t|tee ","t|tea ","t|ti ","the|thee ","v|vee ","we|wee ","beach|beech ","breach|breech ","leach|leech ","accede|exceed ","cede|seed ","he'd|heed ","mead|meed ","knead|need ","kneed|need ","read|rede ","rede|reed ","we'd|weed ","creak|creek ","leak|leek ","peak|pique ","peek|pique ","chic|sheik ","chic|sheikh ","weak|week ","reek|wreak ","he'll|heal ","he'll|heel ","peal|peel ","real|reel ","ceil|seal ","ceil|seel ","ceiling|sealing ","steal|steel ","we'll|weal ","wheal|wheel ","weald|wield ","cream|creme ","deem|deme ","seam|seem ","seamen|semen ","team|teem ","dean|dene ","gene|jean ","gene|gene ","gene|jean ","gene's|jeans ","gene's|genes ","gene's|jean's ","lean|lien ","mean|mien ","scene|seen ","cheap|cheep ","grease|greece ","peace|piece ","beat|beet ","discreet|discrete ","feat|feet ","meat|mete ","meet|mete ","peat|pete ","suite|sweet ","b's|bees ","e's|ease ","frees|frieze ","freeze|frieze ","pleas|please ","c's|sees ","c's|seas ","c's|seize ","c's|cees ","c's|ces ","c's|cs ","c's|psis ","c's|sis ","c's|szis ","t's|teas ","t's|tees ","t's|tease ","we've|weave ","eave|eve ","eve|eve ","eaves|eve's ","eve's|eves ","eerie|eyrie ","eery|eyrie ","erie|eyrie ","aerie|eyrie ","aery|eyrie ","eyrie|eyry ","dear|deer ","hear|here ","peer|pier ","sear|sere ","seer|sere ","shear|sheer ","tear|tier ","cereal|serial ","buy|bye ","by|bye ","hi|hie ","hie|high ","die|dye ","ay|i ","aye|i ","eye|i ","lie|lye ","pi|pie ","rye|wry ","psi|sigh ","tie|tyigh ","thai|tyigh ","tai|tyigh ","taille|tyigh ","tye|tyigh ","wye|y ","eyed|i'd ","idol|idyll ","idle|idol ","pride|pried ","side|sighed ","tide|tied ","i'll|isle ","aisle|i'll ","vile|viol ","vial|vile ","wild|wiled ","rhyme|rime ","thyme|time ","miner|minor ","sign|sine ","find|fined ","mind|mined ","wind|wynd ","wined|wynd ","dire|dyer ","drier|dryer ","flier|flyer ","higher|hire ","liar|lyre ","lier|lyre ","sigher|sire ","tire|tyre ","tier|tyre ","tyre|tyre ","prise|prize ","rise|ryes ","sighs|size ","whys|wise ","why's|wise ","bite|byte ","bight|byte ","knight|night ","might|mite ","rite|wright ","right|wright ","wright|write ","cite|site ","sight|site ","recite|resite ","resight|resite ","sleight|slight ","o|oh ","o|owe ","eau|o ","eaux|o ","haut|o ","beau|bow ","do|doe ","do|dough ","floe|flow ","ho|hoe ","lo|low ","know|no ","rho|roe ","rho|row ","sew|sol ","so|sol ","sol|sow ","sloe|slow ","throe|throw ","toe|tow ","broach|brooch ","bode|bowed ","load|lowed ","lode|lowed ","mode|mowed ","ode|owed ","road|rowed ","rode|rowed ","toad|towed ","toed|towed ","yoke|yolk ","boll|bowl ","bole|bowl ","cole|kohl ","coal|kohl ","hole|whole ","holy|wholly ","holey|wholly ","pole|poll ","role|roll ","seoul|sol ","seoul|sole ","seoul|soul ","tole|toll ","bold|bowled ","hold|holed ","sold|soled ","soled|souled ","told|tolled ","comb|combe ","roam|rome ","groan|grown ","loan|lone ","moan|mown ","shone|shown ","sone|sown ","sewn|sown ","throne|thrown ","moat|mote ","rote|wrote ","hoes|hose ","knows|nos ","nos|nose ","noes|nos ","roes|rows ","roes|rose ","chord|cord ","ward|warred ","warn|worn ","boar|boer ","boer|bore ","for|fore ","for|four ","4|for ","o'er|oar ","o'er|ore ","poor|pour ","pore|pour ","soar|sore ","yore|your ","yore|you're ","board|bored ","gored|gourd ","hoard|whored ","horde|whored ","coarse|course ","hoarse|horse ","soars|sores ","pores|pours ","roil|royal ","boy|buoy ","cast|caste ","tacks|tax ","bach|batch ","catch|ketch ","ad|add ","rack|wrack ","sac|sack ","palette|pallet ","dam|damn ","jam|jamb ","lam|lamb ","cannon|canon ","canvas|canvass ","manner|manor ","band|banned ","capital|capitol ","rap|wrap ","rapper|wrapper ","rapping|wrapping ","rapped|rapt ","rapt|wrapped ","baron|barren ","carat|carrot ","carrot|karat ","caret|carrot ","cache|cash ","fat|phat ","mat|matt ","matt|matte ","matt|matt ","bough|bow ","chow|ciao ","plough|plow ","sough|sow ","allowed|aloud ","foul|fowl ","council|counsel ","councillor|counselor ","hour|our ","flour|flower ","retch|wretch ","bread|bred ","lead|led ","medal|meddle ","pedal|peddle ","read|red ","reck|wreck ","ex|x ","ell|l ","el|l ","cell|sell ","cellar|seller ","em|m ","concent|consent ","accept|except ","ascent|assent ","en|n ","cent|scent ","scent|sent ","cents|sense ","scents|sense ","censer|sensor ","censor|sensor ","centaurii|centaury ","dense|dents ","descent|dissent ","presence|presents ","residence|residents ","step|steppe ","rest|wrest ","weather|wether ","metal|mettle ","berry|bury ","heroin|heroine ","desert|dessert ","come|cum ","plum|plumb ","rhumb|rum ","some|sum ","|dum ","|dumb ","|dêœm ","done|dun ","ton|tun ","tonne|tun ","son|sun ","1|won ","1|one ","rung|wrung ","currant|current ","mustard|mustered ","muscle|mussel ","but|butt ","berth|birth ","colonel|kernel ","earn|urn ","fir|fur ","per|purr ","bird|burred ","heard|herd ","whirled|world ","whorled|world ","serf|surf ","hertz|hurts ","nibble|nybble ","|rigor ","|rigger ","|'réªg.é™r ","chile|chilly ","chile|chili ","chile|chilli ","billed|build ","gorilla|guerrilla ","guerilla|guerrilla ","cymbal|symbol ","him|hymn ","immanent|imminent ","limb|limn ","in|inn ","principal|principle ","mince|mints ","prince|prints ","links|lynx ","ring|wring ","sink|synch ","sync|synch ","ringer|wringer ","scissel|syssal ","scissile|syssal ","sicel|syssal ","sisal|syssal ","sisel|syssal ","sissle|syssal ","it's|its ","profit|prophet ","bloc|block ","doc|dock ","loch|lock ","lock|lough ","knock|nock ","roc|rock ","don|don ","knot|not ","are|arr ","sargent|sergeant ","sargent|serjeant ","bard|barred ","bazaar|bizarre ","marshal|martial ","marshall|martial ","arc|ark ","hart|heart ","all|awl ","|altar ","|alter ","|é”ël.té™r ","ball|bawl ","call|caul ","hall|haul ","mall|maul ","bald|bawled ","balled|bawled ","pall|paul ","faun|fawn ","dawn|dawn ","aureole|oriole ","storey|story ","aught|ought ","naught|nought ","taught|taut ","pause|paws ","clause|claws ","wood|would ","bleu|blew ","bleu|blue ","cue|q ","q|queue ","cues|q's ","q's|queues ","dew|due ","flew|flue ","loo|lou ","knew|new ","gnu|nu ","choux|shoo ","choux|shoe ","slew|slue ","sioux|sue ","2|to ","2|too ","2|two ","who|whoo ","pupal|pupil ","u|yew ","u|you ","ewe|u ","crewed|crude ","mood|mooed ","rude|rued ","dual|duel ","you'll|yule ","tomb|toom ","troop|troupe ","brews|bruise ","cruise|cruse ","crews|cruse ","rues|ruse ","who's|whose ","u's|use ","u's|yews ","ewes|u's ","adds|adz ","ads|adz ","air|heir ","err|heir ","aisle|isle ","alms|arms ","altar|alter ","ant|aunt ","ate|eight ","auger|augur ","auk|orc ","away|aweigh ","awe|ore ","oar|ore ","or|ore ","axel|axle ","baize|bays ","bay|bey ","be|bee ","bean|been ","beer|bier ","bel|belle ","bell|belle ","bitten|bittern ","blew|blue ","boar|bore ","boarder|border ","bolder|boulder ","boos|booze ","born|borne ","bouillon|bullion ","brae|bray ","braise|braze ","brays|braze ","brewed|brood ","bridal|bridle ","brows|browse ","bur|burr ","buyer|byre ","calendar|calender ","callous|callus ","caret|karat ","carol|carrel ","caster|castor ","caught|court ","caw|corps ","core|corps ","cent|sent ","cession|session ","chews|choose ","chili|chilly ","choir|quire ","choral|coral ","chute|shoot ","clack|claque ","clew|clue ","click|clique ","climb|clime ","close|cloze ","coign|coin ","complacent|complaisant ","complement|compliment ","coo|coup ","coop|coupe ","cops|copse ","cousin|cozen ","crewel|cruel ","crews|cruise ","cue|queue ","kyu|queue ","curser|cursor ","defused|diffused ","desert (as in abandon)|dessert ","deviser|divisor ","do|due ","do (musical note)|dough ","doe|dough ","douse|dowse ","ewe|you ","yew|you ","fa|far ","farther|father ","fate|fãªte ","fay|fey ","ferrule|ferule ","few|phew ","fie|phi ","file|phial ","fizz|phiz ","flaw|floor ","flecks|flex ","flu|flue ","flocks|phlox ","foaled|fold ","fore|four ","foreword|forward ","fort|fought ","forth|fourth ","franc|frank ","friar|fryer ","furs|furze ","galipot|gallipot ","gallop|galop ","gamble|gambol ","gays|gaze ","gene|jean ","genes|jeans ","gild|guild ","gilt|guilt ","giro|gyro ","gnaw|nor ","gneiss|nice ","gnu|new ","greave|grieve ","grisly|grizzly ","hair|here ","hare|here ","halve|have ","hangar|hanger ","haw|whore ","hoar|whore ","heal|heel ","hew|hue ","hi|high ","hoard|horde ","hostel|hostile ","incite|insight ","indict|indite ","key|quay ","knap|nap ","knave|nave ","knit|nit ","knob|nob ","knows|nose ","laager|lager ","lac|lack ","laps|lapse ","lase|laze ","law|lore ","lay|ley ","lei|ley ","lea|lee ","lessen|lesson ","levee|levy ","licence|license ","lichen|liken ","licker|liquor ","lieu|loo ","load|lode ","locks|lox ","loop|loupe ","loot|lute ","main|mane ","maize|maze ","manna|manor ","mantel|mantle ","mare|mayor ","mark|marque ","marten|martin ","mask|masque ","maw|more ","moor|more ","miner|mynah ","minor|mynah ","moose|mousse ","morning|mourning ","nay|neigh ","nigh|nye ","none|nun ","od|odd ","oh|owe ","one|won ","overdo|overdue ","overseas|oversees ","packs|pax ","pair|pear ","palate|pallet ","pascal|paschal ","paten|pattern ","patten|pattern ","pause|pours ","paws|pours ","pawn|porn ","pea|pee ","peke|pique ","pearl|purl ","pica|pika ","poof|pouffe ","quarts|quartz ","quean|queen ","raise|raze ","rays|raze ","raw|roar ","read|reed ","review|revue ","rheum|room ","right|write ","rite|write ","roe|row ","roo|rue ","roux|rue ","rood|rude ","root|route ","rose|rows ","rota|rotor ","rough|ruff ","rouse|rows ","sane|seine ","satire|satyr ","sauce|source ","saver|savor ","saw|sore ","scull|skull ","seas|seize ","sees|seize ","serge|surge ","sew|sow ","so|sow ","shake|sheikh ","shoe|shoo ","sic|sick ","slough|slue ","soared|sword ","sole|soul ","sort|sought ","spa|spar ","staid|stayed ","stalk|stork ","stationary|stationery ","stile|style ","swat|swot ","talk|torque ","taught|torte ","taut|torte ","tort|torte ","te|tee ","tea|tee ","teas|tease ","terce|terse ","tern|turn ","threw|through ","throes|throws ","tic|tick ","to|two ","too|two ","tor|tore ","tough|tuff ","tuba|tuber ","vary|very ","vice|vise ","wade|weighed ","wain|wane ","wall|waul ","want|wont ","war|wore ","ware|where ","wear|where ","wart|wort ","watt|what ","wax|whacks ","way|whey ","weigh|whey ","we|whee ","wee|whee ","wheeled|wield ","wean|ween ","weather|whether ","wether|whether ","weaver|weever ","we'll|wheel ","weal|wheel ","we're|weir ","were|whirr ","wet|whet ","whig|wig ","while|wile ","whine|wine ","whirl|whorl ","whit|wit ","white|wight ","whoa|woe ","yaw|your ","you're|your ","check|czech "};
-public String[] ASRresult;
+    @Override 
+    public int getCount() {
+        if(jsonArray==null) 
+         return 0;
+        else
+        return jsonArray.length();
+    }
 
-public void difference(String actual, String asrresult){
-	String[] orginaldata = actual.split("/[ ]+/");
-	String[] resutdata = asrresult.split("/[ ]+/");
-}
+    @Override 
+    public JSONObject getItem(int position) {
+    	Log.e("json array position",""+position);
+         if(jsonArray==null) return null;
+         else
+           return jsonArray.optJSONObject(position);
+    }
+
+    @Override 
+    public long getItemId(int position) {
+        //JSONObject jsonObject = getItem(position);
+        return position;
+    }
+
+    @Override 
+    public View getView(int position, View convertView, ViewGroup parent) {
+    	
+    	  LayoutInflater inflator = (LayoutInflater)activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+          convertView = inflator.inflate(R.layout.scoreview, parent,false);
+        if (convertView == null){
+      //  LayoutInflater inflator = (LayoutInflater)activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        //convertView = inflator.inflate(R.layout.scoreview, parent,false);
+        }
+        TextView text =(TextView)convertView.findViewById(R.id.scoredetails);
+        TextView previouslevel = (TextView)convertView.findViewById(R.id.previouslevel);
+        TextView nextlevel = (TextView)convertView.findViewById(R.id.nextlevel);
+        ProgressBar levelprogress = (ProgressBar)convertView.findViewById(R.id.levelprogress);
+        ImageView img = (ImageView)convertView.findViewById(R.id.avatar);
+        if(position ==0){
+        	img.setImageResource(R.drawable.img1);
+        }
+        else if(position ==1){
+        	img.setImageResource(R.drawable.img2);
+        }
+        else if(position == 2){
+        	img.setImageResource(R.drawable.img3);
+        }
+        else {
+        	img.setImageResource(R.drawable.img4);
+        }
+                    JSONObject json_data = getItem(position);  
+                    int score,level,tt,userid;
+                    String name;
+					try {
+						userid = json_data.getInt("UserID");
+						name = json_data.getString("Name");
+						score = json_data.getInt("Score");
+						level = (int)score/1000;
+						tt = json_data.getInt("Level");
+				        text.setText(name+"\nDistinct TTs :"+tt);
+				        previouslevel.setText("Level "+level);
+				        nextlevel.setText("Level "+(level+1));
+				        levelprogress.setProgress(score%1000);
+					} catch (JSONException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+						userid=0;
+					}
+					
+					if(userid== Baseclass.userid)
+						convertView.setBackgroundResource(R.color.mild_blue);
+           return convertView;
+    }
+
+
+	
 }

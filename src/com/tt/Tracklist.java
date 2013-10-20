@@ -4,110 +4,58 @@ import android.content.ContentResolver;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
-import android.support.v4.widget.SimpleCursorAdapter;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.Button;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class Tracklist extends FragmentActivity implements LoaderManager.LoaderCallbacks<Cursor>  {
+public class Tracklist extends Baseclass {
 
-	Baseclass bs;
 	CheckBox completed;
 	TextView tv;
 	int nodeid; 
+	Cursor cur;
+	ListView list;
+	ContentResolver cr ;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState); 
-		 bs = new Baseclass();
 		setContentView(R.layout.tracklist);
-		ListView list = (ListView)findViewById(R.id.tttracklist);
+		list = (ListView)findViewById(R.id.tttracklist);
 		Bundle extra = getIntent().getExtras();
 		nodeid = Integer.parseInt(extra.getString("nodeid"));
-		bs.query = "select  _id,Phrase,Length,Updated,Completed from phrase  where _id in (select nodeid from tracknode where trackid = "+nodeid+");";
-		bs.projection = new String[] {"_id", "phrase","updated"};  
-	    ContentResolver cr = getContentResolver();
-		getSupportLoaderManager().initLoader(Baseclass.LOADER_ID, null,this);
-		  bs.mAdapter = new SimpleCursorAdapter(this,
-	              R.layout.tracklist, null,
-	              new String[] {"Phrase","Completed" },
-	              new int[] { R.id.trackphrase,R.id.completed }, 0);
-		  list.setAdapter(bs.mAdapter);
-		  //ContentResolver cr = getContentResolver();
-		  findViewById(R.id.trackphrase).setVisibility(View.GONE);
-		  findViewById(R.id.completed).setVisibility(View.GONE);
-		  list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
-			@Override
-			public void onItemClick(AdapterView<?> array, View view, int position,
-					long arg3) {
-				// TODO Auto-generated method stub
-			}
-		});
-
+		String nodename = extra.getString("nodename");
+		query = "select  phrase.[_id],phrase.[Phrase],phrase.[Completed],attempt.[msecs],attempt.[isgreen] from phrase left join attempt on phrase.[_id] = attempt.[NodeID]  where phrase.[_id] in (select nodeid from tracknode where trackid = "+nodeid+")";// order by phrase.[Completed] DESC
+	    cr = getContentResolver();
+	    /*
+	     * set header and footer for list
+	     * */
+	    TextView headertext = (TextView)findViewById(R.id.headertext);
+        headertext.setText(nodename);
+	    cur = cr.query(CONTENT_URI, projection, query, null, null);
+	    Tracklistadpater tracklist= new Tracklistadpater(getApplicationContext(),R.layout.tracklistview, cur,
+                new String[] {"Phrase","_id" },
+                new int[] { R.id.trackphrase,R.id.trackstatus }, 0);
+		/*Note : set layout items to clikable = false to use on item listener or the clickable item takes focus*/
+		list.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Log.d("clicked", "clicked on item: " + position);
+                TextView tv = (TextView)view.findViewById(R.id.trackphrase);
+				Intent i = new Intent(getApplicationContext(),Detailedtrack.class);
+				i.putExtra("phraseid", Integer.parseInt(tv.getTag().toString()));
+				i.putExtra("nodeid", nodeid);
+				i.putExtra("position",position);
+				startActivity(i);
+            }
+        });
+		list.setAdapter(tracklist); 
 		}
-	
-	@Override
-	public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-		// TODO Auto-generated method stub
-		switch (loader.getId()) {
-	      case Baseclass.LOADER_ID:
-	    	  Log.e("loader","swaped"+cursor.getCount());
-	        // The asynchronous load is complete and the data
-	        // is now available for use. Only now can we associate
-	        // the queried Cursor with the SimpleCursorAdapter.
-	        bs.mAdapter.swapCursor(cursor);
-	        break;
-	    }
-		
-
-		 bs.mAdapter.setViewBinder(new SimpleCursorAdapter.ViewBinder() {
-			 @Override  
-			 public boolean setViewValue(View view, Cursor cur, int columnIndex) { 
-	    		   if(columnIndex==cur.getColumnIndex("Phrase")){
-	    		        TextView tv  = (TextView)view.findViewById(R.id.trackphrase);
-		    	        int nodeid = cur.getInt(cur.getColumnIndex("_id"));
-		    	        /*if(count.get(personid.indexOf(person)) <=1)
-		       	       	tv.setText(""+count.get(personid.indexOf(person))+" Quote");
-		    	        else*/ 
-		    	        tv.setText(cur.getString(cur.getColumnIndex("Phrase")));
-		    	        tv.setTag(nodeid); }
-	    		   else if(columnIndex==cur.getColumnIndex("Completed")){
-	    			   CheckBox ch = (CheckBox)view.findViewById(R.id.completed);
-	    			   if(cur.getInt(columnIndex)==0)
-		    	        	ch.setChecked(false);
-	    			   else 
-	    				   ch.setChecked(true);
-		    	       ch.setClickable(false);
-		    	       }
-	    	   	return true;
-	    	    }
-		 });
-
-	}
-	
-	@Override
-	public void onLoaderReset(Loader<Cursor> arg0) {
-		// TODO Auto-generated method stub
-		bs.mAdapter.swapCursor(null);
-	}
-
-	@Override
-	public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
-		// TODO Auto-generated method stub
-		Log.e("loader","created");
-		  CursorLoader cursorLoader = new CursorLoader(this,Baseclass.CONTENT_URI, bs.projection, bs.query, null, null);
-				  return cursorLoader;
-	
-	}
-	
 	
 	public void showdetailedtrack(View v){
 		
@@ -117,4 +65,18 @@ public class Tracklist extends FragmentActivity implements LoaderManager.LoaderC
 		startActivity(i);
 	}
 
+	@Override
+    public void onResume()
+    {
+         super.onResume();
+         list.setAdapter(null);
+         cur = cr.query(CONTENT_URI, projection, query, null, null);
+         Tracklistadpater tracklist= new Tracklistadpater(getApplicationContext(),R.layout.tracklistview, cur,
+                 new String[] {"Phrase","_id" },
+                 new int[] { R.id.trackphrase,R.id.trackstatus }, 0);
+         list.setAdapter(tracklist);
+         tracklist.notifyDataSetChanged();
+         
+    }
+	
 }

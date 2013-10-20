@@ -5,6 +5,8 @@ package com.tt;
 
 import java.util.List;
 
+import org.json.JSONArray;
+
 import android.content.ContentProvider;
 import android.content.ContentValues;
 import android.database.Cursor;
@@ -62,7 +64,7 @@ public class Contentprovider extends ContentProvider {
 		// TODO Auto-generated method stub
 		Copyfiles fp = new Copyfiles(); /* intiate the file copy class and call the copydatabse function*/
 		fp.Copydatabase(getContext());
-		db = new Database(getContext(), "TT.sqlite", factory, 1);  /*intiate the database connection */
+		db = Database.getInstance(getContext(),"TT.sqlite");  /*intiate the database connection */
 		return true;
 	}
 
@@ -88,5 +90,5 @@ public class Contentprovider extends ContentProvider {
 		Log.e("table",""+database.toString());
 		return db.update(database.get(0), values, where);
 	}
-
+	
 }

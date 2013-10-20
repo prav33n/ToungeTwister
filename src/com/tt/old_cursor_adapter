@@ -1,0 +1,437 @@
+package com.tt;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import android.os.Bundle;
+import android.app.AlertDialog;
+import android.content.ContentResolver;
+import android.content.ContentValues;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.database.Cursor;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
+import android.support.v4.widget.SimpleCursorAdapter;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ListView;
+
+
+
+public class Home extends FragmentActivity implements LoaderManager.LoaderCallbacks<Cursor>   { 
+	Baseclass bs;
+	JSONObject  json;
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState); 
+		bs = new Baseclass();
+		//final boolean customTitleSupported = requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
+		setContentView(R.layout.home);
+		/*   if (customTitleSupported) {
+	            getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE,
+	                    R.layout.titlebar);
+	        }*/
+		ListView list = (ListView)findViewById(R.id.TTlist);
+		bs.query = "select _id, tracktype, tracklevel from track";
+		bs.projection = new String[] {"_id", "tracktype","tracklevel"}; 
+
+		final ContentResolver cr = getContentResolver();
+		Cursor cur = cr.query(Baseclass.CONTENT_URI, null, "select * from user where _id=1", null, null);
+		LayoutInflater factory = LayoutInflater.from(this);
+		final View textEntryView = factory.inflate(R.layout.introdialog,null);
+		
+		if(cur.getCount() == 0){
+			AlertDialog.Builder alertbox = new AlertDialog.Builder(this);
+			alertbox.setTitle("Please enter your Name");
+			alertbox.setView(textEntryView);
+			alertbox.setPositiveButton("Save", new DialogInterface.OnClickListener() {
+				// do something when the button is clicked
+				public void onClick(DialogInterface arg0, int arg1) {
+					ContentValues cv = new ContentValues();
+					EditText et = (EditText)textEntryView.findViewById(R.id.username);
+					String username = et.getText().toString();
+					int hashcode = username.hashCode();
+					Log.e("hashcode","//"+username);
+					cv.put("_id", 1);
+					cv.put("UserID",hashcode);
+					cv.put("Name", username);
+					cv.put("Level",0);
+					cv.put("Updated", System.currentTimeMillis());
+					cv.put("Synced",true);
+					cr.insert(Baseclass.CONTENT_URIUser, cv);
+					Baseclass.userid =hashcode;
+					try{
+						json = new JSONObject();
+						json.put("UserID",hashcode);
+						json.put("Name", username);
+						json.put("Level",0);
+						Thread t = new Thread(new Runnable() {
+							public void run() { 
+								Baseclass.httpclient("http://107.21.123.15/asrresult/updateuser.php",json);
+							}
+						});
+						t.start();	
+					}
+					catch(JSONException e){
+
+					}
+				}
+			});
+			alertbox.setCancelable(false);
+			alertbox.show();
+		}
+		else{
+			cur.moveToFirst();
+			Baseclass.userid = cur.getInt(cur.getColumnIndex("UserID"));
+			Log.e("TT TAG",""+Baseclass.userid);
+			cur.close();
+		}
+		getSupportLoaderManager().initLoader(Baseclass.LOADER_ID, null,this);
+		bs.mAdapter = new SimpleCursorAdapter(this,
+				R.layout.home, null,
+				new String[] {"TrackType","TrackLevel" },
+				new int[] { R.id.TTtrackname,R.id.dummy_button }, 0);
+		list.setAdapter(bs.mAdapter);
+		findViewById(R.id.TTtrackname).setVisibility(View.GONE);
+		list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> array, View view, int position,
+					long arg3) {
+				// TODO Auto-generated method stub
+				Button bt = (Button) view.findViewById(R.id.TTtrackname);
+				Intent i = new Intent(getApplicationContext(),Tracklist.class);
+				i.putExtra("nodeid", bt.getTag().toString());
+				startActivity(i);
+			}
+		});
+
+	}
+	@Override
+	public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
+		// TODO Auto-generated method stub
+		Log.e("loader","created");
+		CursorLoader cursorLoader = new CursorLoader(this,Baseclass.CONTENT_URI, bs.projection, bs.query, null, null);
+		return cursorLoader;
+		//return null;
+	}
+
+	@Override
+	public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+		// TODO Auto-generated method stub
+		switch (loader.getId()) {
+		case Baseclass.LOADER_ID:
+			Log.e("loader","swaped"+cursor.getCount());
+			// The asynchronous load is complete and the data
+			// is now available for use. Only now can we associate
+			// the queried Cursor with the SimpleCursorAdapter.
+			bs.mAdapter.swapCursor(cursor);
+			break;
+		}
+
+
+		bs.mAdapter.setViewBinder(new SimpleCursorAdapter.ViewBinder() {
+			@Override  
+			public boolean setViewValue(View view, Cursor cur, int columnIndex) {
+				Button rl;
+				if(columnIndex==cur.getColumnIndex("TrackType")){
+					Button bt  = (Button)view.findViewById(R.id.TTtrackname);
+					int nodeid = cur.getInt(cur.getColumnIndex("_id"));
+					/*if(count.get(personid.indexOf(person)) <=1)
+		       	       	tv.setText(""+count.get(personid.indexOf(person))+" Quote");
+		    	        else*/ 
+					bt.setText(cur.getString(cur.getColumnIndex("TrackType")));
+					bt.setTag(nodeid); }
+				else if(columnIndex==cur.getColumnIndex("TrackLevel")){
+					rl = (Button)view.findViewById(R.id.dummy_button);
+					rl.setVisibility(View.GONE);
+				}
+				return true;
+			}
+		});
+
+	}
+
+	@Override
+	public void onLoaderReset(Loader<Cursor> arg0) {
+		// TODO Auto-generated method stub
+		bs.mAdapter.swapCursor(null);
+	}
+
+	public void showtracklist(View v){
+		// TODO Auto-generated method stub
+		Button bt = (Button) v.findViewById(R.id.TTtrackname);
+		Intent i = new Intent(getApplicationContext(),Tracklist.class);
+		i.putExtra("nodeid", bt.getTag().toString());
+		startActivity(i);
+	}
+
+	public void showscore(View v){
+		Intent i = new Intent(getApplicationContext(),Leaderboard.class);
+		i.putExtra("mode", "leaderboard");
+		startActivity(i);
+	}
+
+}
+
+
+/*public class Home extends Activity {
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.home);
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// Inflate the menu; this adds items to the action bar if it is present.
+		getMenuInflater().inflate(R.menu.home, menu);
+		return true;
+	}
+
+}*/
+
+
+//Javascript graph based score code 
+package com.tt;
+
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import android.annotation.SuppressLint;
+import android.content.ContentResolver;
+import android.database.Cursor;
+import android.os.Bundle;
+import android.util.Log;
+import android.webkit.WebView;
+
+@SuppressLint("SetJavaScriptEnabled")
+public class Score extends Baseclass {
+	ContentResolver cr;
+	String html = new String();
+	WebView scoreview;
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);  
+		setContentView(R.layout.scores);
+
+		scoreview = (WebView)findViewById(R.id.scoreview);	
+		Bundle extras = getIntent().getExtras();
+		if(extras.getString("mode").equals("detailscore")){
+			int nodeid = extras.getInt("NodeID");
+			cr = this.getContentResolver();
+			query = "select * from attempt where NodeID="+nodeid;
+			Cursor cur = cr.query(CONTENT_URI, projection, query, null, null);
+			cur.moveToFirst();
+			html ="<!DOCTYPE HTML> <html> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"> <title>Highcharts Example</title> <script type=\"text/javascript\" src=\"file:///android_asset/jquery.min.js\"></script> <script type=\"text/javascript\"> $(function () { $('#container').highcharts({ chart: { type: 'column' }, title: { text:'Score view' }, subtitle: { text: 'Phrase' }, xAxis: { categories:['Attempts'], }, yAxis: { min: 0, title: { text: 'No attempts' } }, tooltip: { headerFormat: '<span style=\"font-size:10px\">{point.key}</span><table>', pointFormat: '<tr><td style=\"padding:0\">{series.name}: </td>' + '<td style=\"padding:0\"><b>{point.y:.1f}</b></td></tr>', footerFormat: '</table>', shared: false, useHTML: true }, plotOptions: { column: { pointPadding: 0.2, borderWidth: 0 } }, series: [{ name: 'Red Attempts', color: 'Red', data: ["+cur.getInt(cur.getColumnIndex("redattempts"))+"] }, { name: 'Yellow Attempts', color:'yellow', data: ["+cur.getInt(cur.getColumnIndex("yellowattempts"))+"] }, { name: 'Green Attempts', color:'green', data: ["+cur.getInt(cur.getColumnIndex("greenattempts"))+"] }] }); }); </script> </head> <body> <script src=\"file:///android_asset/highcharts.js\"></script> <div id=\"container\" style=\"min-width: 310px; height: 400px; margin: 0 auto\"></div> </body> </html>";
+			scoreview.getSettings().setJavaScriptEnabled(true);
+			String mime = "text/html";
+			String encoding = "utf-8";
+			//myWebView.getSettings().setJavaScriptEnabled(true);
+			scoreview.loadDataWithBaseURL("file:///android_asset/", html, mime, encoding, null);}
+		else if(extras.getString("mode").equals("leaderboard")){
+
+			Thread updatescore = new Thread(new Runnable() {
+				public void run() { 
+					JSONObject json = new JSONObject();
+					try {
+						json.put("score","topscore");
+						String result = streamtostring(Baseclass.httpclient("http://107.21.123.15/asrresult/totalscore.php",json));
+						JSONArray jarray = new JSONArray(result);
+						html = "<html><body><table border='1px' style='width:100%;'><tr><th>User</th><th>Score</th><th>Level</th></tr>";
+						for(int i = 0; i<jarray.length();i++){
+							JSONObject jobj = new JSONObject();
+							jobj = jarray.getJSONObject(i);
+							if(jobj.getInt("UserID")==Baseclass.userid){
+								html+= "<tr bgcolor=\"#0099CC\"><td>"+jobj.getString("Name")+"</td><td>"+
+								jobj.getInt("Score")+"</td><td>"+
+								jobj.getInt("Level")+"</td></tr>";
+							}
+							else{
+								html+= "<tr><td>"+jobj.getString("Name")+"</td><td>"+
+								jobj.getInt("Score")+"</td><td>"+
+								jobj.getInt("Level")+"</td></tr>";}
+
+						}
+						html +="</table></body></html>";
+						scoreview.getSettings().setJavaScriptEnabled(true);
+						String mime = "text/html";
+						String encoding = "utf-8";
+						//myWebView.getSettings().setJavaScriptEnabled(true);
+						scoreview.loadDataWithBaseURL(null, html, mime, encoding, null);
+					} catch (JSONException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			});
+			updatescore.start();
+
+
+
+
+			/*	query = "select attemptnumber,passed,score,feedback,phrase.[Phrase] from attempt INNER JOIN  phrase on attempt.[NodeID] = phrase.[_id]";
+		Cursor cur = this.getContentResolver().query(CONTENT_URI, projection, query, null, null);
+		String html = "<html><body><table border='1px' style='width:100%;'><tr><th>Phrase</th><th>no attempts</th><th>Score</th><th>Your result</th><th>Passed</th></tr>";
+		if(cur.getCount() > 0)
+			cur.moveToFirst();
+		for(int i=0;i < cur.getCount(); i++)
+		{
+			html+= "<tr><td>"+ cur.getString(cur.getColumnIndex("Phrase"))+"</td><td>"+
+			cur.getInt(cur.getColumnIndex("AttemptNumber"))+"</td><td>"+
+			cur.getInt(cur.getColumnIndex("Score"))+"</td><td>"+
+			cur.getString(cur.getColumnIndex("Feedback"))+"</td><td>"+
+			cur.getInt(cur.getColumnIndex("Passed"))+"</td></tr>";
+			if(!cur.isLast())
+			cur.moveToNext();
+		}	
+		//		"<tr><td>123330</td><td>3 hours 24 mins</td><td>213</td><td>213</td></tr>" ;
+
+				html +="</table></body></html>";
+		 cur.close();  */
+
+
+		}
+
+		//String html ="<!DOCTYPE HTML> <html> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"> <title>Highcharts Example</title> <script type=\"text/javascript\" src=\"file:///android_asset/jquery.min.js\"></script> <script type=\"text/javascript\"> $(function () { $('#container').highcharts({ chart: { type: 'column' }, title: { text:'Score view' }, subtitle: { text: 'Phrase' }, xAxis: { categories:['Attempts'], }, yAxis: { min: 0, title: { text: 'No attempts' } }, tooltip: { headerFormat: '<span style=\"font-size:10px\">{point.key}</span><table>', pointFormat: '<tr><td style=\"padding:0\">{series.name}: </td>' + '<td style=\"padding:0\"><b>{point.y:.1f}</b></td></tr>', footerFormat: '</table>', shared: false, useHTML: true }, plotOptions: { column: { pointPadding: 0.2, borderWidth: 0 } }, series: [{ name: 'Red Attempts', color: 'Red', data: [3] }, { name: 'Yellow Attempts', color:'yellow', data: [4] }, { name: 'Green Attempts', color:'green', data: [1] }] }); }); </script> </head> <body> <script src=\"file:///android_asset/highcharts.js\"></script> <div id=\"container\" style=\"min-width: 310px; height: 400px; margin: 0 auto\"></div> </body> </html>";
+
+	}
+
+}
+
+
+//adapter code for tracklist 
+package com.tt;
+
+import android.content.ContentResolver;
+import android.content.Intent;
+import android.database.Cursor;
+import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
+import android.support.v4.widget.SimpleCursorAdapter;
+import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.ListView;
+import android.widget.TextView;
+
+public class Tracklist extends FragmentActivity implements LoaderManager.LoaderCallbacks<Cursor>  {
+
+	Baseclass bs;
+	CheckBox completed;
+	TextView tv;
+	int nodeid; 
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState); 
+		 bs = new Baseclass();
+		setContentView(R.layout.tracklist);
+		ListView list = (ListView)findViewById(R.id.tttracklist);
+		Bundle extra = getIntent().getExtras();
+		nodeid = Integer.parseInt(extra.getString("nodeid"));
+		bs.query = "select  _id,Phrase,Length,Updated,Completed from phrase  where _id in (select nodeid from tracknode where trackid = "+nodeid+");";
+		bs.projection = new String[] {"_id", "phrase","updated"};  
+	    ContentResolver cr = getContentResolver();
+		getSupportLoaderManager().initLoader(Baseclass.LOADER_ID, null,this);
+		  bs.mAdapter = new SimpleCursorAdapter(this,
+	              R.layout.tracklist, null,
+	              new String[] {"Phrase","Completed" },
+	              new int[] { R.id.trackphrase,R.id.completed }, 0);
+		  list.setAdapter(bs.mAdapter);
+		  //ContentResolver cr = getContentResolver();
+		  findViewById(R.id.trackphrase).setVisibility(View.GONE);
+		  findViewById(R.id.completed).setVisibility(View.GONE);
+		  list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> array, View view, int position,
+					long arg3) {
+				// TODO Auto-generated method stub
+			}
+		});
+
+		}
+	
+	@Override
+	public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+		// TODO Auto-generated method stub
+		switch (loader.getId()) {
+	      case Baseclass.LOADER_ID:
+	    	  Log.e("loader","swaped"+cursor.getCount());
+	        // The asynchronous load is complete and the data
+	        // is now available for use. Only now can we associate
+	        // the queried Cursor with the SimpleCursorAdapter.
+	        bs.mAdapter.swapCursor(cursor);
+	        break;
+	    }
+		
+
+		 bs.mAdapter.setViewBinder(new SimpleCursorAdapter.ViewBinder() {
+			 @Override  
+			 public boolean setViewValue(View view, Cursor cur, int columnIndex) { 
+	    		   if(columnIndex==cur.getColumnIndex("Phrase")){
+	    		        TextView tv  = (TextView)view.findViewById(R.id.trackphrase);
+		    	        int nodeid = cur.getInt(cur.getColumnIndex("_id"));
+		    	        /*if(count.get(personid.indexOf(person)) <=1)
+		       	       	tv.setText(""+count.get(personid.indexOf(person))+" Quote");
+		    	        else*/ 
+		    	        tv.setText(cur.getString(cur.getColumnIndex("Phrase")));
+		    	        tv.setTag(nodeid); }
+	    		   else if(columnIndex==cur.getColumnIndex("Completed")){
+	    			   CheckBox ch = (CheckBox)view.findViewById(R.id.completed);
+	    			   if(cur.getInt(columnIndex)==0)
+		    	        	ch.setChecked(false);
+	    			   else 
+	    				   ch.setChecked(true);
+		    	       ch.setClickable(false);
+		    	       }
+	    	   	return true;
+	    	    }
+		 });
+
+	}
+	
+	@Override
+	public void onLoaderReset(Loader<Cursor> arg0) {
+		// TODO Auto-generated method stub
+		bs.mAdapter.swapCursor(null);
+	}
+
+	@Override
+	public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
+		// TODO Auto-generated method stub
+		Log.e("loader","created");
+		  CursorLoader cursorLoader = new CursorLoader(this,Baseclass.CONTENT_URI, bs.projection, bs.query, null, null);
+				  return cursorLoader;
+	
+	}
+	
+	
+	public void showdetailedtrack(View v){
+		
+		Intent i = new Intent(getApplicationContext(),Detailedtrack.class);
+		i.putExtra("phraseid", Integer.parseInt(""+v.getTag().toString()));
+		i.putExtra("nodeid", nodeid);
+		startActivity(i);
+	}
+
+}
+

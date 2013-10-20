@@ -3,6 +3,7 @@ package com.tt;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.AlertDialog;
 import android.content.ContentResolver;
@@ -10,190 +11,138 @@ import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
-import android.support.v4.widget.SimpleCursorAdapter;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.AdapterView;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 
 
 
-public class Home extends FragmentActivity implements LoaderManager.LoaderCallbacks<Cursor>   { 
-	Baseclass bs;
-	JSONObject  json;
+public class Home extends Baseclass   { 
+	static ContentResolver cr;
+	static AlertDialog.Builder alertbox;
+	static AlertDialog dlg;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState); 
-		 bs = new Baseclass();
-		//final boolean customTitleSupported = requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
+		/* run the following command to back up data rom device 
+		 * adb backup -f ~/data.ab -noapk com.tt
+		 * dd if=data.ab bs=1 skip=24 | openssl zlib -d | tar -xvf - 
+		 * to extract data.ab file in linux evironment
+		 * */
+		final boolean customTitleSupported = requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
 		setContentView(R.layout.home);
-	     /*   if (customTitleSupported) {
+		   if (customTitleSupported) {
 	            getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE,
-	                    R.layout.titlebar);
-	        }*/
-		ListView list = (ListView)findViewById(R.id.TTlist);
-		bs.query = "select _id, tracktype, tracklevel from track";
-		bs.projection = new String[] {"_id", "tracktype","tracklevel"}; 
-		
-	    final ContentResolver cr = getContentResolver();
-	    Cursor cur = cr.query(Baseclass.CONTENT_URI, null, "select * from user where _id=1", null, null);
-		   LayoutInflater factory = LayoutInflater.from(this);
-           final View textEntryView = factory.inflate(R.layout.introdialog,null);
-	    if(cur.getCount() == 0){
-	        AlertDialog.Builder alertbox = new AlertDialog.Builder(this);
-	        alertbox.setTitle("Please enter your Name");
-            alertbox.setView(textEntryView);
-            alertbox.setPositiveButton("Save", new DialogInterface.OnClickListener() {
-            	// do something when the button is clicked
-                public void onClick(DialogInterface arg0, int arg1) {
-                			ContentValues cv = new ContentValues();
-                			EditText et = (EditText)textEntryView.findViewById(R.id.username);
-                			String username = et.getText().toString();
-                			int hashcode = username.hashCode();
-                			Log.e("hashcode","//"+username);
-                			cv.put("_id", 1);
-                			cv.put("UserID",hashcode);
-                			cv.put("Name", username);
-                			cv.put("Level",0);
-                			cv.put("Updated", System.currentTimeMillis());
-                			cv.put("Synced",true);
-                			cr.insert(Baseclass.CONTENT_URIUser, cv);
-                			Baseclass.userid =hashcode;
-                			try{
-                				json = new JSONObject();
-                				json.put("UserID",hashcode);
-                				json.put("Name", username);
-                				json.put("Level",0);
-                				Thread t = new Thread(new Runnable() {
-                					public void run() { 
-                						Baseclass.httpclient("http://107.21.123.15/asrresult/updateuser.php",json);
-                					}
-                				});
-                				t.start();	
-                			}
-                			catch(JSONException e){
-                				
-                			}
-                }
-            });
-        	alertbox.setCancelable(false);
-			alertbox.show();
+	                    R.layout.ttheader);
 	        }
-	    else{
-	    	cur.moveToFirst();
-	    	Baseclass.userid = cur.getInt(cur.getColumnIndex("UserID"));
-	    	Log.e("TT TAG",""+cur.getInt(cur.getColumnIndex("UserID")));
-	    }
-		getSupportLoaderManager().initLoader(Baseclass.LOADER_ID, null,this);
-		  bs.mAdapter = new SimpleCursorAdapter(this,
-	              R.layout.home, null,
-	              new String[] {"TrackType","TrackLevel" },
-	              new int[] { R.id.TTtrackname,R.id.dummy_button }, 0);
-		  list.setAdapter(bs.mAdapter);
-		  findViewById(R.id.TTtrackname).setVisibility(View.GONE);
-		  list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
-			@Override
-			public void onItemClick(AdapterView<?> array, View view, int position,
-					long arg3) {
-				// TODO Auto-generated method stub
-				Button bt = (Button) view.findViewById(R.id.TTtrackname);
-				Intent i = new Intent(getApplicationContext(),Tracklist.class);
-				i.putExtra("nodeid", bt.getTag().toString());
-				startActivity(i);
-			}
-		});
-
-		}
-	@Override
-	public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
-		// TODO Auto-generated method stub
-		Log.e("loader","created");
-		  CursorLoader cursorLoader = new CursorLoader(this,Baseclass.CONTENT_URI, bs.projection, bs.query, null, null);
-				  return cursorLoader;
-		//return null;
-	}
-
-	@Override
-	public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-		// TODO Auto-generated method stub
-		switch (loader.getId()) {
-	      case Baseclass.LOADER_ID:
-	    	  Log.e("loader","swaped"+cursor.getCount());
-	        // The asynchronous load is complete and the data
-	        // is now available for use. Only now can we associate
-	        // the queried Cursor with the SimpleCursorAdapter.
-	        bs.mAdapter.swapCursor(cursor);
-	        break;
-	    }
+		ListView list = (ListView)findViewById(R.id.TTlist);
+		cr = this.getContentResolver();
+		 Databasesync sync = new Databasesync(this);
+		 sync.execute(new String[]{"stats"});
+		query = "select _id, tracktype, tracklevel from track";
+		final ContentResolver cr = getContentResolver();
+		Cursor cur = cr.query(Baseclass.CONTENT_URI, null, "select * from user where _id=1", null, null);
+		LayoutInflater factory = LayoutInflater.from(this);
+		final View textEntryView = factory.inflate(R.layout.introdialog,null);
 		
-
-		 bs.mAdapter.setViewBinder(new SimpleCursorAdapter.ViewBinder() {
-			 @Override  
-			 public boolean setViewValue(View view, Cursor cur, int columnIndex) {
-	    		   Button rl;
-	    		   
-	    		   if(columnIndex==cur.getColumnIndex("TrackType")){
-	    		        Button bt  = (Button)view.findViewById(R.id.TTtrackname);
-		    	        int nodeid = cur.getInt(cur.getColumnIndex("_id"));
-		    	        /*if(count.get(personid.indexOf(person)) <=1)
-		       	       	tv.setText(""+count.get(personid.indexOf(person))+" Quote");
-		    	        else*/ 
-		    	        bt.setText(cur.getString(cur.getColumnIndex("TrackType")));
-		    	        bt.setTag(nodeid); }
-	    		   else if(columnIndex==cur.getColumnIndex("TrackLevel")){
-		    	        	rl = (Button)view.findViewById(R.id.dummy_button);
-		    	        	rl.setVisibility(View.GONE);
-		    	        	}
-	    	   	return true;
-	    	    }
-		 });
-
+		if(cur.getCount() == 0){
+			alertbox = new AlertDialog.Builder(this);
+			alertbox.setTitle("Please enter your Name");
+			alertbox.setView(textEntryView);
+			alertbox.setPositiveButton("Save", new DialogInterface.OnClickListener() {
+				// do something when the button is clicked
+				public void onClick(DialogInterface arg0, int arg1) {
+					ContentValues cv = new ContentValues();
+					EditText et = (EditText)textEntryView.findViewById(R.id.username);
+					String username = et.getText().toString();
+					Integer hashcode = username.hashCode();
+					Log.e("hashcode","//"+username+"//"+hashcode);
+						new Usercheck().execute(username,hashcode.toString());
+				}
+			});
+			alertbox.setCancelable(false);
+			dlg = alertbox.create();
+			dlg.setCancelable(false);
+			dlg.show();
+		}
+		else{
+			cur.moveToFirst();
+			Baseclass.userid = cur.getInt(cur.getColumnIndex("UserID"));
+			Baseclass.name = cur.getString(cur.getColumnIndex("Name"));
+			Log.e("TT TAG",""+Baseclass.userid);
+			cur.close();
+		}
+		
+		cur= cr.query(CONTENT_URI, projection, query, null, null);
+		TTlistadapter listadapter = new TTlistadapter (cur,this);//jArray is your json array 
+		list.setAdapter(listadapter); 
 	}
 	
-	@Override
-	public void onLoaderReset(Loader<Cursor> arg0) {
-		// TODO Auto-generated method stub
-		bs.mAdapter.swapCursor(null);
-	}
-
 	public void showtracklist(View v){
 		// TODO Auto-generated method stub
-		Button bt = (Button) v.findViewById(R.id.TTtrackname);
+		Button bt = (Button) v.findViewById(R.id.ttname);
 		Intent i = new Intent(getApplicationContext(),Tracklist.class);
 		i.putExtra("nodeid", bt.getTag().toString());
+		i.putExtra("nodename", bt.getText().toString());
 		startActivity(i);
 	}
-	
+
 	public void showscore(View v){
-		Intent i = new Intent(getApplicationContext(),Score.class);
+		Intent i = new Intent(getApplicationContext(),Leaderboard.class);
 		i.putExtra("mode", "leaderboard");
 		startActivity(i);
 	}
+}
+
+class Usercheck extends AsyncTask<String,Integer,String>
+{
+	String username, status;
+	Integer hashcode;
 	
+	@Override
+	protected String doInBackground(String... params) {
+		// TODO Auto-generated method stub
+		username = params[0];
+		hashcode = Integer.parseInt(params[1]);
+		JSONObject json = new JSONObject();
+		try {
+			json.put("UserID",hashcode);
+			json.put("Name", username);
+			json.put("Level",0);
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		status = Baseclass.streamtostring(Baseclass.httpclient("http://107.21.123.15/ttservices/updateuser.php",json));
+		if(status.equals("false") || username.isEmpty()){
+			publishProgress(1);}
+		else{
+			ContentValues cv = new ContentValues();
+			cv.put("_id", 1);
+			cv.put("UserID",hashcode);
+			cv.put("Name", username);
+			cv.put("Created", System.currentTimeMillis());
+			Home.cr.insert(Baseclass.CONTENT_URIUser, cv);
+			Baseclass.userid =hashcode;
+			Baseclass.name= username;
+		}
+		return null;
+	}
+	
+	 protected void onProgressUpdate(Integer... progress) {
+	        //This method runs on the UI thread, it receives progress updates
+	        //from the background thread and publishes them to the status bar
+		 //Home.alertbox.setTitle("User Name exist !");
+		 if(username.isEmpty())
+			 Home.dlg.setTitle("User Name Cannot be empty ! \nPlease enter you NicKName");
+		 else 
+		 Home.dlg.setTitle("User Name exist ! \nPlease enter you NicKName");
+		 Home.dlg.show();
+	    }
 }
 
 
-/*public class Home extends Activity {
-
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.home);
-	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.home, menu);
-		return true;
-	}
-
-}*/

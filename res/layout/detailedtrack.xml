@@ -1,164 +1,150 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent" 
-    android:background="#0099cc">
+ <ScrollView xmlns:tools="http://schemas.android.com/tools"
+     xmlns:android="http://schemas.android.com/apk/res/android"
+     android:id="@+id/detailedtrack"
+     android:layout_width="match_parent"
+     android:layout_height="match_parent"
+     android:background="@drawable/hdpi_bg" >
 
-    <RelativeLayout
-        android:id="@+id/topbar"
-        android:layout_width="wrap_content"
-        android:layout_height="35dp"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="false"
-        android:background="@drawable/btn_default"
-        android:visibility="gone" >
-
-        <Button
-            android:id="@+id/previous"
-            style="?android:attr/buttonStyleSmall"
-            android:layout_width="75dp"
-            android:layout_height="50dp"
-            android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="10dp"
-            android:background="@drawable/previousbutton"
-            android:onClick="previoustrack"
-            android:text="@string/previous"
-            android:textColor="#000" />
-
-        <Button
-            android:id="@+id/next"
-            style="?android:attr/buttonStyleSmall"
-            android:layout_width="75dp"
-            android:layout_height="50dp"
-            android:layout_alignBaseline="@+id/previous"
-            android:layout_alignBottom="@+id/previous"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="10dp"
-            android:background="@drawable/nextbutton"
-            android:onClick="nexttrack"
-            android:text="@string/next"
-            android:textColor="#000" />
-
-        <TextView
-            android:id="@+id/toptitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/next"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
-            android:text="Time"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="#000" />
-
-    </RelativeLayout>
-
-    <TextView
-        android:id="@+id/phrase"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_below="@+id/topbar"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="28dp"
-        android:gravity="center_horizontal"
-        android:maxWidth="250dp"
-        android:scrollHorizontally="false"
-        android:singleLine="false"
-        android:text="Large Text"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textSize="25sp" />
-
-    <ImageButton
-        android:id="@+id/play"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/phrase"
-        android:layout_marginLeft="52dp"
-        android:layout_marginTop="24dp"
-        android:background="@drawable/buttonstyle"
-        android:onClick="startplay"
-        android:src="@drawable/play" />
-
-    <ImageButton
-        android:id="@+id/speech"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_alignBottom="@+id/play"
-        android:layout_alignParentRight="true"
-        android:layout_alignTop="@+id/play"
-        android:layout_marginRight="64dp"
-        android:background="@drawable/buttonstyle"
-        android:onClick="startspeech"
-        android:src="@drawable/speech" />
-
-    <RelativeLayout
-        android:id="@+id/resultwindow"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="false"
-        android:layout_below="@+id/play"
-        android:layout_marginTop="20dp"
-        android:background="@drawable/btn_default"
-        android:visibility="gone" >
-
-        <RatingBar
-            android:id="@+id/resultrating"
-            style="?android:attr/ratingBarStyleIndicator"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_below="@+id/resulttext"
-            android:isIndicator="true"
-            android:numStars="5"
-            android:visibility="gone" />
-
-        <TextView
-            android:id="@+id/resulttext"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignLeft="@+id/resultrating"
-            android:layout_alignParentTop="true"
-            android:layout_marginLeft="5dp"
-            android:scrollHorizontally="false"
-            android:text="TextView"
-            android:textColor="#000" />
+            android:layout_height="match_parent"
+            android:padding="5dp" >
 
-        <Button
-            android:id="@+id/viewscore"
-            style="?android:attr/buttonStyleSmall"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/resulttext"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="16dp"
-            android:minHeight="30dip"
-            android:onClick="viewscore"
-            android:text="View Scores" />
+            <android.gesture.GestureOverlayView
+                android:id="@+id/ttgesture"
+                android:layout_width="match_parent"
+                android:layout_height="400dp"
+                android:layout_alignParentTop="true"
+                android:eventsInterceptionEnabled="true"
+                android:fitsSystemWindows="true"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:gestureColor="@color/transparent" >
+            </android.gesture.GestureOverlayView>
 
-    </RelativeLayout>
+            <TextView
+                android:id="@+id/phrase"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_below="@+id/topbar"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="15dp"
+                android:gravity="center_horizontal"
+                android:maxWidth="240dp"
+                android:scrollHorizontally="false"
+                android:singleLine="false"
+                android:text="Large Text"
+                android:textColor="#ffffff"
+                android:textSize="22sp" />
 
-    <ImageButton
-        android:id="@+id/buttonprevious"
-        android:layout_width="35dp"
-        android:layout_height="100dp"
-        android:layout_alignParentLeft="true"
-        android:layout_alignTop="@+id/buttonnext"
-        android:onClick="previoustrack"
-        android:src="@drawable/previous" />
+            <RelativeLayout
+                android:id="@+id/navigationwindow"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/phrase"
+                android:layout_marginTop="10dp" >
 
-    <ImageButton
-        android:id="@+id/buttonnext"
-        android:layout_width="35dp"
-        android:layout_height="100dp"
-        android:layout_alignParentRight="true"
-        android:layout_alignTop="@+id/phrase"
-        android:onClick="nexttrack"
-        android:src="@drawable/next" />
+                <Button
+                    android:id="@+id/record"
+                    style="@style/ButtonAppTheme"
+                    android:layout_width="200dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerHorizontal="true"
+                    android:onClick="startspeech"
+                    android:text="Record"
+                    android:textColor="#FFFFFF"
+                    android:visibility="visible" />
 
-</RelativeLayout>
+                <Button
+                    android:id="@+id/replay"
+                    style="@style/ButtonAppTheme"
+                    android:layout_width="200dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignLeft="@+id/record"
+                    android:layout_below="@+id/record"
+                    android:layout_marginTop="10dp"
+                    android:onClick="startplay"
+                    android:text="Replay"
+                    android:textColor="#FFFFFF"
+                    android:visibility="visible" />
+
+                <ImageButton
+                    android:id="@+id/buttonnext"
+                    style="@style/ButtonAppTheme"
+                    android:layout_width="35dp"
+                    android:layout_height="105dp"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginLeft="10dp"
+                    android:layout_toRightOf="@+id/record"
+                    android:onClick="nexttrack"
+                    android:src="@drawable/next"
+                    android:visibility="visible" />
+
+                <ImageButton
+                    android:id="@+id/buttonprevious"
+                    style="@style/ButtonAppTheme"
+                    android:layout_width="35dp"
+                    android:layout_height="105dp"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginRight="10dp"
+                    android:layout_toLeftOf="@+id/record"
+                    android:onClick="previoustrack"
+                    android:src="@drawable/previous"
+                    android:visibility="visible" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/resultwindow"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@id/navigationwindow"
+                android:layout_marginLeft="3dp"
+                android:layout_marginRight="3dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/btn_default_disabled_focused_holo_light"
+                android:padding="15dp"
+                android:visibility="gone" >
+
+                <TextView
+                    android:id="@+id/resulttext"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:gravity="center"
+                    android:scrollHorizontally="false"
+                    android:text="TextView"
+                    android:textColor="#fff"
+                    android:textSize="20sp" />
+
+                <Button
+                    android:id="@+id/viewscore"
+                    style="@style/ButtonAppTheme"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/besttime"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="10dp"
+                    android:minHeight="30dip"
+                    android:onClick="viewscore"
+                    android:text="Leaderboard" />
+
+                <TextView
+                    android:id="@+id/besttime"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignLeft="@+id/resulttext"
+                    android:layout_below="@+id/resulttext"
+                    android:layout_marginTop="3dp"
+                    android:gravity="center"
+                    android:text="TextView"
+                    android:textColor="#ffffff"
+                    android:textSize="20sp" />
+            </RelativeLayout>
+        </RelativeLayout>
+   
+</ScrollView>

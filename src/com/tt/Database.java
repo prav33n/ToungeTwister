@@ -3,10 +3,16 @@
  */
 package com.tt;
 
+import java.util.Calendar;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteStatement;
 import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
@@ -16,8 +22,13 @@ import android.util.Log;
  *
  */
 public class Database extends SQLiteOpenHelper {
-SQLiteDatabase tt;
-	public Database(Context context, String name, CursorFactory factory,
+	
+	private static Database db;
+	SQLiteDatabase tt;
+	static Context con;
+	static CursorFactory factory;
+	static String name;
+	private Database(Context context, String name, CursorFactory factory,
 			int version) {
 		super(context, name, factory, version);
 		// TODO Auto-generated constructor stub
@@ -47,6 +58,13 @@ SQLiteDatabase tt;
 
 	}
 	
+	public static synchronized Database getInstance(Context con, String name)
+	{
+		if (db == null)
+			db = new Database(con,name, factory,1);
+		return db;
+	}
+	
 	public Cursor queryall(String DB_TABLE) {
 		try {
 			Cursor Cur = tt.rawQuery("Select * from "+DB_TABLE, null);
@@ -54,6 +72,7 @@ SQLiteDatabase tt;
 			catch(Exception e) {e.printStackTrace(); return null;}
 		
 		}
+	
 	public int update (String DB_TABLE,ContentValues values,String where){
 		tt.beginTransaction();
 		int update = tt.update(DB_TABLE, values, where,null);
@@ -63,6 +82,7 @@ SQLiteDatabase tt;
 		//checkDB.close();
 		return update;
 	}
+	
 	public long insert(String DB_TABLE, ContentValues values) {
 //	   	ContentValues initialValues = new ContentValues();
 		tt.beginTransaction();
@@ -85,6 +105,76 @@ SQLiteDatabase tt;
 		
 	}
 	
+	
+	public boolean insertstats(JSONArray jArray) {
+		 
+		tt.beginTransaction();
+		try {
+		    SQLiteStatement insert = null;
+		   insert = tt.compileStatement("INSERT OR REPLACE INTO \"stat\" (\"_id\",\"UserID\",\"NodeID\",\"msecs\",\"isgreen\",\"updated\",\"Name\") VALUES (?,?,?,?,?,?,?)");
+		   //Parse the staring to json foramt 
+			   //JSONArray jArray = new JSONArray(result);
+				 JSONObject json_data=null;
+				 Log.e("insert stats",""+(jArray.length()-1));
+				 Calendar cal = Calendar.getInstance();
+				 for(int i=0;i<jArray.length()-1;i++){
+					json_data = jArray.getJSONObject(i);
+					insert.bindLong(1, Integer.parseInt(json_data.getString("_id")));
+					insert.bindLong(2, Integer.parseInt(json_data.getString("userid")));
+					insert.bindLong(3, Integer.parseInt(json_data.getString("tracknodeid")));
+					insert.bindLong(4, Integer.parseInt(json_data.getString("msec")));
+					insert.bindLong(5, Integer.parseInt(json_data.getString("isgreen")));
+			        insert.bindLong(6, cal.getTimeInMillis());
+			        insert.bindString(7, json_data.getString("name"));
+			        insert.execute();
+			        insert.clearBindings();
+				 }       
+		    tt.setTransactionSuccessful();
+			 return true;
+		}
+		catch (Exception e) {
+		    String errMsg = (e.getMessage() == null) ? "bulkInsert failed" : e.getMessage();
+		    Log.e("bulkInsert stats:", errMsg);
+			 return false;
+		}
+		finally {
+		    tt.endTransaction();
+		  }
+	 }
+
+	
+	public boolean insertuser(JSONArray jArray) {
+		 
+		tt.beginTransaction();
+		try {
+		    SQLiteStatement insert = null;
+		   insert = tt.compileStatement("INSERT OR REPLACE INTO \"leaderboard\" (\"_id\",\"UserID\",\"Level\",\"Name\",\"Score\") VALUES (?,?,?,?,?)");
+		   //Parse the staring to json foramt 
+			   //JSONArray jArray = new JSONArray(result);
+				 JSONObject json_data=null;
+				 Log.e("insert leaderboard",""+jArray.length());
+				 for(int i=0;i<jArray.length();i++){
+					json_data = jArray.getJSONObject(i);
+					insert.bindLong(1, json_data.getString("ID") == null?0:Integer.parseInt(json_data.getString("ID")));
+					insert.bindLong(2, Integer.parseInt(json_data.getString("UserID")));
+					insert.bindLong(3, Integer.parseInt(json_data.getString("Level")));
+					insert.bindString(4, (json_data.getString("Name")));
+					insert.bindLong(5, Integer.parseInt(json_data.getString("Score")));
+			        insert.execute();
+			        insert.clearBindings();
+				 }       
+		    tt.setTransactionSuccessful();
+			 return true;
+		}
+		catch (Exception e) {
+		    String errMsg = (e.getMessage() == null) ? "bulkInsert failed" : e.getMessage();
+		    Log.e("bulkInsert user:", errMsg);
+			 return false;
+		}
+		finally {
+		    tt.endTransaction();
+		  }
+	 }
 	
 
 }

@@ -1,12 +1,15 @@
 package com.tt;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.channels.FileChannel;
 
 import android.content.Context;
+import android.os.Environment;
 import android.util.Log;
 
 public class Copyfiles {
@@ -17,7 +20,9 @@ public class Copyfiles {
 		final String DB_PATH = "/data/data/"+con.getApplicationContext().getPackageName()+"/databases/";
 		Log.e("Database directory",""+con.getFilesDir().getPath()+"//"+DB_PATH+DB_NAME);
 		File f = new File(DB_PATH+DB_NAME); 
-		if(f.exists()) {Log.e("DB exists",""+con.getDatabasePath(DB_NAME));}
+		if(f.exists()) {
+		     Log.e("DB exist","tt db");
+		 }
 		else {
 		InputStream myinput = con.getAssets().open(DB_NAME);
 		File dir  = new File(DB_PATH);
