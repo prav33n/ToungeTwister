@@ -94,7 +94,7 @@ public class Baseclass extends Activity implements LoaderManager.LoaderCallbacks
 		HttpClient httpclient = new DefaultHttpClient(httpParameters);
 		HttpResponse response= null;
 		HttpPost httppost = new HttpPost(URL);	
-		httppost.setHeader("json",json.toString());
+		//httppost.setHeader("json",json.toString());
 		//httppost.getParams().setParameter("jsonpost",json);
 		try {
 			 httppost.setHeader("Content-type", "application/json");

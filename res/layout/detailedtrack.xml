@@ -1,50 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
- <ScrollView xmlns:tools="http://schemas.android.com/tools"
+
+
+<RelativeLayout xmlns:tools="http://schemas.android.com/tools"
      xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/hdpi_bg" >
+    <include
+        android:id="@+id/header_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        layout="@layout/listheader" />
+
+    <android.gesture.GestureOverlayView
+        android:id="@+id/ttgesture"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/ads_layout"
+        android:layout_below="@id/header_layout"
+        android:clickable="true"
+        android:duplicateParentState="true"
+        android:eventsInterceptionEnabled="true"
+        android:fitsSystemWindows="true"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:gestureColor="@color/transparent"
+        android:longClickable="true"
+        android:minHeight="420dp" >
+
+         <ScrollView
      android:id="@+id/detailedtrack"
      android:layout_width="match_parent"
      android:layout_height="match_parent"
+     android:layout_above="@+id/ads_layout"
      android:background="@drawable/hdpi_bg" >
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="fill_parent"
+            android:clickable="true"
+            android:minHeight="420dp"
             android:padding="5dp" >
-
-            <android.gesture.GestureOverlayView
-                android:id="@+id/ttgesture"
-                android:layout_width="match_parent"
-                android:layout_height="400dp"
-                android:layout_alignParentTop="true"
-                android:eventsInterceptionEnabled="true"
-                android:fitsSystemWindows="true"
-                android:focusable="true"
-                android:focusableInTouchMode="true"
-                android:gestureColor="@color/transparent" >
-            </android.gesture.GestureOverlayView>
 
             <TextView
                 android:id="@+id/phrase"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
-                android:layout_below="@+id/topbar"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="15dp"
                 android:gravity="center_horizontal"
-                android:maxWidth="240dp"
+                android:minLines="2"
                 android:scrollHorizontally="false"
                 android:singleLine="false"
                 android:text="Large Text"
                 android:textColor="#ffffff"
-                android:textSize="22sp" />
+                android:textSize="20sp" />
 
             <RelativeLayout
                 android:id="@+id/navigationwindow"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/phrase"
-                android:layout_marginTop="10dp" >
+                android:layout_marginTop="10dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:focusableInTouchMode="true" >
 
                 <Button
                     android:id="@+id/record"
@@ -145,6 +167,16 @@
                     android:textColor="#ffffff"
                     android:textSize="20sp" />
             </RelativeLayout>
-        </RelativeLayout>
-   
+          </RelativeLayout>
 </ScrollView>
+    </android.gesture.GestureOverlayView>
+
+
+ <include
+                  android:id="@+id/ads_layout"
+                  android:layout_width="fill_parent"
+                  android:layout_height="50dp"
+                  android:layout_alignParentBottom="true"
+                  layout="@layout/ads" />
+
+</RelativeLayout>

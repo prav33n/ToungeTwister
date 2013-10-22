@@ -3,13 +3,14 @@
  */
 package com.tt;
 
-import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
+import android.support.v4.widget.SimpleCursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ListAdapter;
 
@@ -17,71 +18,54 @@ import android.widget.ListAdapter;
  * @author Raven
  *
  */
-public class TTlistadapter extends BaseAdapter implements ListAdapter {
+public class TTlistadapter extends SimpleCursorAdapter implements ListAdapter {
+	Context con;
+	public TTlistadapter(Context context, int layout, Cursor c, String[] from,
+			int[] to, int flags) {
+		super(context, layout, c, from, to, flags);
+		this.con = context;
+		// TODO Auto-generated constructor stub
+	}
 
 	/**
 	 * adapter for the TT list in home screen
 	 */
 	
-	private final Activity activity;
-    private final Cursor cur;
-	public TTlistadapter(Cursor cur, Activity act) {
-		this.cur = cur;
-        this.activity = act;
-		// TODO Auto-generated constructor stub
-	}
-
-	/* (non-Javadoc)
-	 * @see android.widget.Adapter#getCount()
-	 */
 	@Override
-	public int getCount() {
-		// TODO Auto-generated method stub
-		return cur.getCount();
-	}
-
-	/* (non-Javadoc)
-	 * @see android.widget.Adapter#getItem(int)
-	 */
-	@Override
-	public Cursor getItem(int position) {
-		// TODO Auto-generated method stub
-		if(cur.getCount()==0) return null;
-        else{
-        	if(position==0)
-        		cur.moveToFirst();
-        	else if(!cur.isLast())
-        		cur.moveToNext();
-        }
-       return cur;
-	}
-
-	/* (non-Javadoc)
-	 * @see android.widget.Adapter#getItemId(int)
-	 */
-	@Override
-	public long getItemId(int position) {
-		// TODO Auto-generated method stub
-		return position;
-	}
-
-	/* (non-Javadoc)
-	 * @see android.widget.Adapter#getView(int, android.view.View, android.view.ViewGroup)
-	 */
-	@Override
-	public View getView(int position, View view, ViewGroup parent) {
-		// TODO Auto-generated method stub
-		 LayoutInflater inflator = (LayoutInflater)activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-         view = inflator.inflate(R.layout.trackname, parent,false);
-         Button bt =(Button)view.findViewById(R.id.ttname);
-         getItem(position);
-        int nodeid = cur.getInt(cur.getColumnIndex("_id"));
+	public void bindView(View v, Context context, Cursor cur) {
+		// TODO set values to the list view element using cursor data
+		Button bt =(Button)v.findViewById(R.id.ttname);
+		int nodeid = cur.getInt(cur.getColumnIndex("_id"));
 		bt.setText(cur.getString(cur.getColumnIndex("TrackType")));
 		bt.setTag(nodeid);
-		return view;
+		
+		bt.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				
+				Button bt = (Button) v.findViewById(R.id.ttname);
+				Intent i = new Intent(con,Tracklist.class);
+				i.putExtra("nodeid", bt.getTag().toString());
+				i.putExtra("nodename", bt.getText().toString());
+				i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+				con.startActivity(i);
+			} });
+		
+		
+			}
+
+	/* (non-Javadoc)
+	 * @see android.support.v4.widget.CursorAdapter#newView(android.content.Context, android.database.Cursor, android.view.ViewGroup)
+	 */
+	@Override
+	public View newView(Context context, Cursor cur, ViewGroup parent) {
+		// TODO return the view to inflate
+		LayoutInflater inflater = LayoutInflater.from(context);
+		View v = inflater.inflate(R.layout.trackname, parent, false);
+		bindView(v, context, cur);
+		return v;
 	}
 	
-	
-	
-
 }

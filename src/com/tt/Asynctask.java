@@ -96,7 +96,7 @@ public class Asynctask extends AsyncTask<List<String>, Integer, String> {
 				if (res.isEmpty())
 					tv.setText("Please try again");
 				else
-					tv.setText("Your time :"
+					tv.setText("Your Time: "
 							+ String.format("%.2f", (float) duration / 1000)
 							+ " Sec ");
 
@@ -110,7 +110,6 @@ public class Asynctask extends AsyncTask<List<String>, Integer, String> {
 					isgreen = 1;
 				} else if (score <= 30) {
 					tv.setText(tv.getText() + "\n Please Try Again");
-					tv.setTextSize((float) 14.0);
 					tv.setTextColor(Color.RED);
 					isgreen = -1;
 				}
@@ -131,7 +130,7 @@ public class Asynctask extends AsyncTask<List<String>, Integer, String> {
 						mintime = cur.getInt(cur.getColumnIndex("msecs"));
 					} else
 						mintime = duration;
-					besttime.setText("Best time :"
+					besttime.setText("Your Best time: "
 							+ String.format("%.2f", (float) mintime / 1000)
 							+ " Sec");
 					cur.close();
@@ -146,7 +145,7 @@ public class Asynctask extends AsyncTask<List<String>, Integer, String> {
 						isgreen = 1;
 					else if (score <= 30)
 						isgreen = -1;
-					besttime.setText("Best Time :"
+					besttime.setText("Your Best Time: "
 							+ String.format("%.2f", (float) duration / 1000)
 							+ " Sec");
 					Log.e("new result", "" + mintime + "//" + isgreen);

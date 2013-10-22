@@ -15,9 +15,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.AdapterView.OnItemClickListener;
 
 
 
@@ -77,9 +80,23 @@ public class Home extends Baseclass   {
 			cur.close();
 		}
 		
-		cur= cr.query(CONTENT_URI, projection, query, null, null);
-		TTlistadapter listadapter = new TTlistadapter (cur,this);//jArray is your json array 
+		Cursor nodes = cr.query(CONTENT_URI, projection, query, null, null);
+		TTlistadapter listadapter = new TTlistadapter (getApplicationContext(),R.layout.trackname, nodes,
+                new String[] {"TrackType","_id" },
+                new int[] { R.id.ttname,R.id.ttname }, 0);//jArray is your json array 
 		list.setAdapter(listadapter); 
+		list.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Log.d("clicked", "clicked on item: " + position);
+                Button bt = (Button) view.findViewById(R.id.ttname);
+        		Intent i = new Intent(getApplicationContext(),Tracklist.class);
+        		i.putExtra("nodeid", bt.getTag().toString());
+        		i.putExtra("nodename", bt.getText().toString());
+        		startActivity(i);
+            }
+        });
+		
 	}
 	
 	public void showtracklist(View v){

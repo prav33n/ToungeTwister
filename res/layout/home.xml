@@ -16,24 +16,11 @@
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentTop="true"
                 android:layout_marginTop="5dp"
-                android:background="@android:color/transparent"
-                android:clipChildren="false"
-                android:fastScrollEnabled="true"
-                android:scrollbarAlwaysDrawVerticalTrack="true"
-                android:scrollbarStyle="insideOverlay"
-                android:smoothScrollbar="true" >
+                android:background="@android:color/transparent">
 
             </ListView>
 
-            <Button
-                android:id="@+id/dummy_button"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignLeft="@+id/TTlist"
-                android:layout_alignParentBottom="true"
-                android:onClick="showscore"
-                android:text="@string/dummy_button"
-                android:textColor="#000"
-                android:visibility="gone" />
+
+
 
 </RelativeLayout>

@@ -42,6 +42,7 @@ public class Tracklistadpater extends SimpleCursorAdapter implements ListAdapter
 		TextView tracklist = (TextView)v.findViewById(R.id.trackphrase);
 		int nodeid = cur.getInt(cur.getColumnIndex("_id"));
 		tracklist.setText(cur.getString(cur.getColumnIndex("Phrase")));
+		//Log.e("track data",""+cur.getString(cur.getColumnIndex("Phrase")));
 	    tracklist.setTag(nodeid);
 	    ImageView trackstatus = (ImageView)v.findViewById(R.id.trackstatus);
 //		   Log.e("msecs",""+cur.getInt(cur.getColumnIndex("msecs")));

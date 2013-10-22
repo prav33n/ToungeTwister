@@ -37,6 +37,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListView;
@@ -67,15 +68,20 @@ public class Detailedtrack extends Baseclass implements OnInitListener,
 	SpeechRecognizer sr;
 	Long start_time, end_time, difference;
 	GestureLibrary gestureLib;
-	Button leaderboard;
+	Button leaderboard, replay;
 	CountDownTimer timer;
 	ByteArrayOutputStream soundstream;
+	AudioManager mAudioManager;
+	AudioTrack audioTrack = null;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		
 		super.onCreate(savedInstanceState);
+		//final boolean customTitleSupported = requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
 		setContentView(R.layout.detailedtrack);
 		Bundle extras = getIntent().getExtras();
+		  TextView headertext = (TextView)findViewById(R.id.headertext);
+	        headertext.setText(extras.getString("nodename"));
 		phraseid = extras.getInt("phraseid");
 		position = extras.getInt("position");
 		nodeid = extras.getInt("nodeid");
@@ -92,6 +98,8 @@ public class Detailedtrack extends Baseclass implements OnInitListener,
 		btnprevious = (ImageButton) findViewById(R.id.buttonprevious);
 		btnnext = (ImageButton) findViewById(R.id.buttonnext);
 		leaderboard = (Button) findViewById(R.id.viewscore);
+		replay = (Button)findViewById(R.id.replay);
+		replay.setText("PlayBack");
 		start_time = (long) 0;
 		end_time = (long) 0;
 		difference = (long) 0;
@@ -123,17 +131,15 @@ public class Detailedtrack extends Baseclass implements OnInitListener,
 				.getApplicationContext());
 		sr.setRecognitionListener(this);
 		Intent intents = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-		intents.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
-				RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+		intents.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
 		intents.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, "com.tt");
-		intents.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 5);
-		//intents.putExtra(RecognizerIntent.ACTION_RECOGNIZE_SPEECH,RecognizerIntent.EXTRA_CONFIDENCE_SCORES);
-		intents.putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true);
-		intents.putExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE,"en-US");
+		intents.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS,5);
+		intents.putExtra(RecognizerIntent.EXTRA_LANGUAGE,  Locale.US.toString());
+		intents.putExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE,  Locale.US.toString()); 
+		intents.putExtra(RecognizerIntent.EXTRA_ONLY_RETURN_LANGUAGE_PREFERENCE,  Locale.US.toString());
 		intents.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_COMPLETE_SILENCE_LENGTH_MILLIS,2500);
 		intents.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_MINIMUM_LENGTH_MILLIS,phrase.length()*500);
-		// intents.putExtra(RecognizerIntent.ACTION_RECOGNIZE_SPEECH,
-		// RecognizerIntent.EXTRA_RESULTS);
+		//intents.putExtra(RecognizerIntent.ACTION_RECOGNIZE_SPEECH,RecognizerIntent.EXTRA_CONFIDENCE_SCORES);
 		sr.startListening(intents);
 		LayoutInflater factory = LayoutInflater.from(this);
 		final View textEntryView = factory.inflate(R.layout.asrdialog, null);
@@ -146,7 +152,7 @@ public class Detailedtrack extends Baseclass implements OnInitListener,
 			tv.setText("Listening");
 		alertbox.setIcon(R.drawable.speech);
 		dlg = alertbox.create();
-		dlg.setCancelable(false);
+		dlg.setCancelable(true);
 		issoundavailable = true;
 		soundstream = new ByteArrayOutputStream();
 	}
@@ -154,24 +160,52 @@ public class Detailedtrack extends Baseclass implements OnInitListener,
 	public void startplay(View v) {
 		// playback test
 		// Log.d("Audio","Playback Started"+issoundavailable);
-		if (issoundavailable) {
-			try {
-				AudioManager mAudioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
-	        	int maxVolume = mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
-	        	mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, maxVolume, AudioManager.FLAG_PLAY_SOUND);
-				AudioTrack audioTrack = new AudioTrack(
-						AudioManager.STREAM_MUSIC, 8000,
-						AudioFormat.CHANNEL_OUT_MONO,
-						AudioFormat.ENCODING_PCM_16BIT,
-						soundstream.size(), AudioTrack.MODE_STATIC);
-				audioTrack.flush();
-				audioTrack.write(soundstream.toByteArray(),0,soundstream.size());
-				audioTrack.play();
-
-			} catch (Exception e) {
-				e.printStackTrace();
-				Log.d("Audio", "Playback Failed");
+		if (issoundavailable && soundstream.size() > 0 ) {
+			
+			setVolumeControlStream(AudioManager.STREAM_MUSIC);
+			 mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+			// Request audio focus for playback
+			
+			int result = mAudioManager.requestAudioFocus(null,
+											// Use the music stream.
+			                                 AudioManager.STREAM_MUSIC,
+			                                 // Request permanent focus.
+			                                 AudioManager.AUDIOFOCUS_GAIN_TRANSIENT);
+			   
+			if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
+				Log.d("Audio",result+"Playback Started"+issoundavailable);
+			    // Start playback.
+				try {
+		        	int maxVolume = mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+		        	int oldVolume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+		        	if (mAudioManager.isBluetoothA2dpOn()) {
+		        	    // Adjust output for Bluetooth.
+		        		maxVolume = maxVolume/2;
+		        	}  else if (mAudioManager.isWiredHeadsetOn()) {
+		        	    // Adjust output for headsets
+		        		maxVolume = maxVolume/2;
+		        	}         	
+		        	mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, maxVolume, AudioManager.FLAG_PLAY_SOUND);
+		        	audioTrack = new AudioTrack(
+							AudioManager.STREAM_MUSIC, 8000,
+							AudioFormat.CHANNEL_OUT_MONO,
+							AudioFormat.ENCODING_PCM_16BIT,
+							soundstream.size(), AudioTrack.MODE_STATIC);
+		        	audioTrack.flush();
+					audioTrack.write(soundstream.toByteArray(),0,soundstream.size());
+					Log.e("Audio status",""+audioTrack.getPlayState()+"//"+mAudioManager.isMusicActive());
+					if(audioTrack.getPlayState() == 1)
+					audioTrack.play();
+					Log.e("Audio status after",""+audioTrack.getPlayState()+"//"+mAudioManager.isMusicActive());
+					//mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, oldVolume, AudioManager.FLAG_PLAY_SOUND);
+					
+				} catch (Exception e) {
+					e.printStackTrace();
+					Log.d("Audio", "Playback Failed");
+				}	
 			}
+			
+			
 		} else {
 			Intent textIntent = new Intent();
 			textIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
@@ -181,22 +215,25 @@ public class Detailedtrack extends Baseclass implements OnInitListener,
 	}
 
 	public void nexttrack(View v) {
-		if (!node.isLast())
-			node.moveToNext();
-		else if (node.isLast())
-			Toast.makeText(this, "Last Track selected",
-					Toast.LENGTH_SHORT).show();
-			
+		if (!node.isLast()){
+			node.moveToNext(); }
+		else if (node.isLast()){
+			Toast toast = Toast.makeText(this, "Last Track selected",
+					Toast.LENGTH_SHORT);
+			toast.setDuration(500);
+			toast.show();}
 		changetrack();
+		
 	}
 
 	public void previoustrack(View v) {
-		if (!node.isFirst())
-			node.moveToPrevious();
-		else if (node.isFirst())
-			Toast.makeText(this, "First Track selected",
-					Toast.LENGTH_SHORT).show();
-			
+		if (!node.isFirst()){
+			node.moveToPrevious(); }
+		else if (node.isFirst()){
+			Toast toast = Toast.makeText(this, "First Track selected",
+					Toast.LENGTH_SHORT);
+			toast.setDuration(500);
+			toast.show();		}
 		changetrack();
 	}
 
@@ -264,18 +301,19 @@ public class Detailedtrack extends Baseclass implements OnInitListener,
 				besttime.setTextColor(Color.RED);
 				findViewById(R.id.viewscore).setVisibility(View.VISIBLE);
 			}
-			besttime.setText("Best Time :"
+			besttime.setText("Your Best Time: "
 					+ String.format(
 							"%.2f",
 							(float) cur.getInt(cur.getColumnIndex("msecs")) / 1000)
 					+ " Sec");
-			cur.close();
 			findViewById(R.id.resulttext).setVisibility(View.GONE);
 			findViewById(R.id.resultwindow).setVisibility(View.VISIBLE);
 			besttime.setVisibility(View.VISIBLE);
+			cur.close();
 		} else
 			findViewById(R.id.resultwindow).setVisibility(View.GONE);
 		return true;
+		
 	}
 
 	public boolean changetrack() {
@@ -285,6 +323,7 @@ public class Detailedtrack extends Baseclass implements OnInitListener,
 		phraseid = node.getInt(node.getColumnIndex("_id"));
 		currentphrase = node.getString(node.getColumnIndex("Phrase"));
 		phrase.setText(currentphrase);
+		//Log.e("track data",""+node.getString(node.getColumnIndex("Phrase")));
 		getscores(node.getInt(node.getColumnIndex("_id")));
 		return true;
 	}
@@ -295,6 +334,11 @@ public class Detailedtrack extends Baseclass implements OnInitListener,
 		super.onPause();
 		if (sr != null)
 			sr.destroy();
+		if(mTts != null )
+			mTts.shutdown();
+		if(audioTrack != null){
+		audioTrack.stop();
+		audioTrack.release();}
 
 	}
 
@@ -370,7 +414,8 @@ public class Detailedtrack extends Baseclass implements OnInitListener,
 	@Override
 	public void onPartialResults(Bundle partialResults) {
 		// TODO Auto-generated method stub
-
+		Log.e("Partial result",""+partialResults.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION).toString());
+	
 	}
 
 	@Override
@@ -396,6 +441,7 @@ public class Detailedtrack extends Baseclass implements OnInitListener,
 			dlg.dismiss();
 		}
 		timer.cancel();
+		replay.setText("Replay");
 
 	}
 

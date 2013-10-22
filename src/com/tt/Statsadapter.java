@@ -189,7 +189,7 @@ public class Statsadapter extends CursorAdapter implements ListAdapter {
 		if( cur.getPosition()< 5){
 			name = cur.getString(cur.getColumnIndex("Name"));
 			totaltime = cur.getInt(cur.getColumnIndex("msecs"));
-			text.setText(name+"\nTime :"+String.format("%.2f", (float)totaltime/1000)+" Secs");
+			text.setText(name+"\nBest Time: "+String.format("%.2f", (float)totaltime/1000)+" Secs");
 			
 			if(id == Baseclass.userid ){v.setBackgroundResource(R.drawable.btn_bg_pressed);}
 			else
@@ -198,7 +198,7 @@ public class Statsadapter extends CursorAdapter implements ListAdapter {
 		else if(id == Baseclass.userid &&  cur.getPosition()== 5){
 			name = cur.getString(cur.getColumnIndex("Name"));
 			totaltime = cur.getInt(cur.getColumnIndex("msecs"));
-			text.setText(name+"\nTime :"+String.format("%.2f", (float)totaltime/1000)+" Secs");
+			text.setText(name+"\nBest Time: "+String.format("%.2f", (float)totaltime/1000)+" Secs");
 			v.setBackgroundResource(R.drawable.btn_bg_pressed);
 		}
 		if(text.getText().equals("TextView")){

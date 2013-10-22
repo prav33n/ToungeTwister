@@ -10,9 +10,18 @@
             style="@style/ListViewAppTheme"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_above="@+id/footer_layout"
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true" >
 
         </ListView>
+
+         <include
+             android:id="@+id/footer_layout"
+             android:layout_width="fill_parent"
+             android:layout_height="50dp"
+             android:layout_alignParentBottom="true"
+             layout="@layout/ads" />
+
     </RelativeLayout>
     

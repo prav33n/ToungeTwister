@@ -4,10 +4,12 @@ import android.content.ContentResolver;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.CheckBox;
@@ -22,14 +24,18 @@ public class Tracklist extends Baseclass {
 	Cursor cur;
 	ListView list;
 	ContentResolver cr ;
+	Parcelable state;
+	String nodename;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState); 
+	//	final boolean customTitleSupported = requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.tracklist);
+	
 		list = (ListView)findViewById(R.id.tttracklist);
 		Bundle extra = getIntent().getExtras();
 		nodeid = Integer.parseInt(extra.getString("nodeid"));
-		String nodename = extra.getString("nodename");
+		nodename = extra.getString("nodename");
 		query = "select  phrase.[_id],phrase.[Phrase],phrase.[Completed],attempt.[msecs],attempt.[isgreen] from phrase left join attempt on phrase.[_id] = attempt.[NodeID]  where phrase.[_id] in (select nodeid from tracknode where trackid = "+nodeid+")";// order by phrase.[Completed] DESC
 	    cr = getContentResolver();
 	    /*
@@ -51,6 +57,7 @@ public class Tracklist extends Baseclass {
 				i.putExtra("phraseid", Integer.parseInt(tv.getTag().toString()));
 				i.putExtra("nodeid", nodeid);
 				i.putExtra("position",position);
+				i.putExtra("nodename", nodename);
 				startActivity(i);
             }
         });
@@ -62,9 +69,19 @@ public class Tracklist extends Baseclass {
 		Intent i = new Intent(getApplicationContext(),Detailedtrack.class);
 		i.putExtra("phraseid", Integer.parseInt(""+v.getTag().toString()));
 		i.putExtra("nodeid", nodeid);
+		i.putExtra("nodename", nodename);
 		startActivity(i);
 	}
 
+	
+	@Override
+    public void onPause()
+    {
+         super.onPause();
+         state = list.onSaveInstanceState();
+         
+    }
+	
 	@Override
     public void onResume()
     {
@@ -76,7 +93,8 @@ public class Tracklist extends Baseclass {
                  new int[] { R.id.trackphrase,R.id.trackstatus }, 0);
          list.setAdapter(tracklist);
          tracklist.notifyDataSetChanged();
-         
+         if(state != null)
+         list.onRestoreInstanceState(state);
     }
 	
 }
