@@ -10,6 +10,7 @@ import java.util.Locale;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -32,12 +33,14 @@ import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.TextToSpeech.OnInitListener;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListView;
@@ -60,6 +63,7 @@ public class Detailedtrack extends Baseclass implements OnInitListener,
 	float currenttime;
 	AlertDialog.Builder alertbox;
 	AlertDialog dlg;
+	Dialog dialog;
 	String currentphrase;
 	ContentResolver cr;
 	Activity act;
@@ -99,7 +103,7 @@ public class Detailedtrack extends Baseclass implements OnInitListener,
 		btnnext = (ImageButton) findViewById(R.id.buttonnext);
 		leaderboard = (Button) findViewById(R.id.viewscore);
 		replay = (Button)findViewById(R.id.replay);
-		replay.setText("PlayBack");
+		replay.setText("Play");
 		start_time = (long) 0;
 		end_time = (long) 0;
 		difference = (long) 0;
@@ -143,7 +147,8 @@ public class Detailedtrack extends Baseclass implements OnInitListener,
 		sr.startListening(intents);
 		LayoutInflater factory = LayoutInflater.from(this);
 		final View textEntryView = factory.inflate(R.layout.asrdialog, null);
-		alertbox = new AlertDialog.Builder(act);
+		tv = (TextView) textEntryView.findViewById(R.id.asrdlgtext);
+	/*	alertbox = new AlertDialog.Builder(getApplicationContext());
 		alertbox.setView(textEntryView);
 		tv = (TextView) textEntryView.findViewById(R.id.asrdlgtext);
 		if (!isOnline())
@@ -152,7 +157,27 @@ public class Detailedtrack extends Baseclass implements OnInitListener,
 			tv.setText("Listening");
 		alertbox.setIcon(R.drawable.speech);
 		dlg = alertbox.create();
-		dlg.setCancelable(true);
+		dlg.setCancelable(true);*/
+
+		dialog = new Dialog(this,R.style.ThemeDialogCustom);
+	    dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+
+	    //you can move the dialog, so that is not centered
+	    DisplayMetrics displaymetrics = new DisplayMetrics();
+	    getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
+	    int height = displaymetrics.heightPixels;
+	    int width = displaymetrics.widthPixels;
+	    Log.e("dialog display",""+width+"//"+height);
+	   // dialog.getWindow().getAttributes().y =350 ; //50 should be based on density */
+	    
+	    WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+        lp.copyFrom(dialog.getWindow().getAttributes());
+        lp.y=(int) (height-200);
+        dialog.getWindow().setAttributes(lp);
+	    dialog.setContentView(textEntryView);
+	    dialog.setCancelable(true);
+	    //dialog.setOnCancelListener(cancelListener);
+	    dialog.show();
 		issoundavailable = true;
 		soundstream = new ByteArrayOutputStream();
 	}
@@ -276,7 +301,7 @@ public class Detailedtrack extends Baseclass implements OnInitListener,
 				mTts.setLanguage(Locale.US);
 			HashMap<String, String> myHashAlarm = new HashMap<String, String>();
 			myHashAlarm.put(TextToSpeech.Engine.KEY_PARAM_STREAM,
-					String.valueOf(AudioManager.STREAM_ALARM));
+					String.valueOf(AudioManager.STREAM_MUSIC));
 			mTts.speak(currentphrase, TextToSpeech.QUEUE_FLUSH, myHashAlarm);
 		} else if (status == TextToSpeech.ERROR) {
 			Toast.makeText(this, "Sorry! Text To Speech failed...",
@@ -310,8 +335,12 @@ public class Detailedtrack extends Baseclass implements OnInitListener,
 			findViewById(R.id.resultwindow).setVisibility(View.VISIBLE);
 			besttime.setVisibility(View.VISIBLE);
 			cur.close();
-		} else
-			findViewById(R.id.resultwindow).setVisibility(View.GONE);
+		} else{
+			findViewById(R.id.viewscore).setVisibility(View.VISIBLE);
+			findViewById(R.id.resultwindow).setVisibility(View.VISIBLE);
+			findViewById(R.id.resulttext).setVisibility(View.GONE);
+			findViewById(R.id.besttime).setVisibility(View.GONE);
+			}
 		return true;
 		
 	}
@@ -368,14 +397,14 @@ public class Detailedtrack extends Baseclass implements OnInitListener,
 		difference = end_time - start_time;
 		Log.e("diff", "" + difference);
 		tv.setText("Processing");
-		dlg.show();
+		dialog.show();
 		processing = true;
 		/** CountDownTimer */
 		timer = new CountDownTimer(30000, 30000) {
 			public void onFinish() {
 				try {
-					if(dlg.isShowing()){
-						dlg.dismiss();
+					if(dialog.isShowing()){
+						dialog.dismiss();
 						findViewById(R.id.resultwindow).setVisibility(View.VISIBLE);
 						TextView test = (TextView) findViewById(R.id.resulttext);
 						test.setVisibility(View.VISIBLE);
@@ -421,7 +450,7 @@ public class Detailedtrack extends Baseclass implements OnInitListener,
 	@Override
 	public void onReadyForSpeech(Bundle params) {
 		// TODO Auto-generated method stub
-		dlg.show();
+		dialog.show();
 
 	}
 
@@ -434,14 +463,14 @@ public class Detailedtrack extends Baseclass implements OnInitListener,
 		if (results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
 				.isEmpty()) {
 			Log.e("ASR" + TAG, "onResults empty" + results.size());
-			dlg.dismiss();
+			dialog.dismiss();
 				} else {
 			Log.e("ASR" + TAG,	"results received"+ results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)+phraseid+"//"+difference);
 			new Asynctask(this, phraseid, difference).execute(results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION));
-			dlg.dismiss();
+			dialog.dismiss();
 		}
 		timer.cancel();
-		replay.setText("Replay");
+		replay.setText("Play");
 
 	}
 

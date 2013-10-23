@@ -27,7 +27,7 @@
         android:focusableInTouchMode="true"
         android:gestureColor="@color/transparent"
         android:longClickable="true"
-        android:minHeight="420dp" >
+        android:uncertainGestureColor="@color/transparent" >
 
          <ScrollView
      android:id="@+id/detailedtrack"
@@ -38,9 +38,8 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="fill_parent"
+            android:layout_height="wrap_content"
             android:clickable="true"
-            android:minHeight="420dp"
             android:padding="5dp" >
 
             <TextView
@@ -128,8 +127,8 @@
                 android:layout_marginLeft="3dp"
                 android:layout_marginRight="3dp"
                 android:layout_marginTop="10dp"
-                android:background="@drawable/btn_default_disabled_focused_holo_light"
-                android:padding="15dp"
+                android:background="@drawable/resultwindowbg"
+                android:padding="20dp"
                 android:visibility="gone" >
 
                 <TextView

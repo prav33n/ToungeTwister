@@ -35,9 +35,9 @@ public class Leaderboard extends Baseclass {
 		//Initialize ListView
 		list= (ListView)findViewById(R.id.scorelist);
 		cr = this.getContentResolver();
-		LayoutInflater inflater = getLayoutInflater();
+		/*LayoutInflater inflater = getLayoutInflater();
         ViewGroup listheader = (ViewGroup)inflater.inflate(R.layout.listheader, list, false);
-        list.addHeaderView(listheader, null, false);
+        list.addHeaderView(listheader, null, false);*/
 		act= this;
 		Bundle extras = getIntent().getExtras();
 		if(extras.getString("mode").equals("leaderboard")){
@@ -49,11 +49,11 @@ public class Leaderboard extends Baseclass {
 		}
 
 		else if(extras.getString("mode").equals("scoreboard")){
-			TextView tv = (TextView)listheader.findViewById(R.id.headertext);
+			TextView tv = (TextView)findViewById(R.id.headertext);
 			tv.setText("Leaderboard");
-			ViewGroup listfooter = (ViewGroup)inflater.inflate(R.layout.listheader, list, false);
-			tv = (TextView)listfooter.findViewById(R.id.headertext);
-			tv.setText("Score : "+extras.getInt("currenttime"));
+			//ViewGroup listfooter = (ViewGroup)inflater.inflate(R.layout.listheader, list, false);
+			//tv = (TextView)listfooter.findViewById(R.id.headertext);
+			//tv.setText("Score : "+extras.getInt("currenttime"));
 		    //list.addFooterView(listfooter,null,true);
 			nodeid = extras.getInt("NodeID");
 			

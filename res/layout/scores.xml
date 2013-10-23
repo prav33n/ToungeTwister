@@ -4,7 +4,13 @@
         android:layout_height="wrap_content"
         android:background="@drawable/hdpi_bg"
         android:orientation="vertical" >
-
+    <include
+        android:id="@+id/header_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        layout="@layout/listheader" />
+    
         <ListView
             android:id="@+id/scorelist"
             style="@style/ListViewAppTheme"
@@ -12,7 +18,7 @@
             android:layout_height="wrap_content"
             android:layout_above="@+id/footer_layout"
             android:layout_alignParentLeft="true"
-            android:layout_alignParentTop="true" >
+            android:layout_below="@id/header_layout" >
 
         </ListView>
 

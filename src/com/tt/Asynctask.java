@@ -87,6 +87,7 @@ public class Asynctask extends AsyncTask<List<String>, Integer, String> {
 				tv = (TextView) act.findViewById(R.id.resulttext);
 				tv.setVisibility(View.VISIBLE);
 				besttime = (TextView) act.findViewById(R.id.besttime);
+				besttime.setVisibility(View.VISIBLE);
 				leaderboard = (Button) act.findViewById(R.id.viewscore);
 				act.findViewById(R.id.resultwindow).setVisibility(View.VISIBLE);
 				res = jobj.getString("asrphrase");
