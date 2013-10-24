@@ -19,7 +19,6 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
 
 
@@ -107,7 +106,18 @@ public class Home extends Baseclass   {
 		i.putExtra("nodename", bt.getText().toString());
 		startActivity(i);
 	}
-
+	
+	@Override
+	public void onResume(){
+		super.onResume();
+		overridePendingTransition(R.anim.push_right_in, R.anim.push_right_out);
+	}
+	@Override
+	public void onPause(){
+		super.onPause();
+		overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+	}
+	
 	public void showscore(View v){
 		Intent i = new Intent(getApplicationContext(),Leaderboard.class);
 		i.putExtra("mode", "leaderboard");

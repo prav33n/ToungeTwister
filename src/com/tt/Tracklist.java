@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,7 +21,7 @@ public class Tracklist extends Baseclass {
 
 	CheckBox completed;
 	TextView tv;
-	int nodeid; 
+	int nodeid, keycode; 
 	Cursor cur;
 	ListView list;
 	ContentResolver cr ;
@@ -70,6 +71,7 @@ public class Tracklist extends Baseclass {
 		i.putExtra("phraseid", Integer.parseInt(""+v.getTag().toString()));
 		i.putExtra("nodeid", nodeid);
 		i.putExtra("nodename", nodename);
+		overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
 		startActivity(i);
 	}
 
@@ -79,7 +81,10 @@ public class Tracklist extends Baseclass {
     {
          super.onPause();
          state = list.onSaveInstanceState();
-         
+   /*      if(keycode == KeyEvent.KEYCODE_BACK)
+        	 overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+         else 
+        	 overridePendingTransition(R.anim.push_right_in, R.anim.push_right_out);*/
     }
 	
 	@Override
@@ -95,6 +100,14 @@ public class Tracklist extends Baseclass {
          tracklist.notifyDataSetChanged();
          if(state != null)
          list.onRestoreInstanceState(state);
+         //overridePendingTransition(R.anim.push_right_in, R.anim.push_right_out);
     }
+	
+	@Override
+	 public boolean onKeyDown(int keyCode, KeyEvent event) {
+		 this.keycode = keycode;
+	     return super.onKeyDown(keyCode, event);
+	 }
+	
 	
 }

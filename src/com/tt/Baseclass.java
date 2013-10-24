@@ -47,6 +47,7 @@ public class Baseclass extends Activity implements LoaderManager.LoaderCallbacks
 	public static final Uri CONTENT_URIStats =  Uri.parse("content://com.TT.provider/stat");
 	public static final String TAG = "TT Logs";
 	
+	static boolean transition = false;
 	String[] projection;
 	String query;
 	static String name;

@@ -19,7 +19,10 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 /**
@@ -80,6 +83,11 @@ public class Asynctask extends AsyncTask<List<String>, Integer, String> {
 		super.onPostExecute(result);
 		long mintime = 0;
 		int isgreen = -1;
+		RelativeLayout movieContainer;
+		movieContainer = (RelativeLayout) act.findViewById(R.id.resultwindow); // get scroll View
+		Animation anim = AnimationUtils.loadAnimation(act, R.anim.fadein); 
+		movieContainer.startAnimation(anim);
+		
 		if (!result.equals("null")) {
 			try {
 				jobj = new JSONObject(result);
@@ -96,23 +104,24 @@ public class Asynctask extends AsyncTask<List<String>, Integer, String> {
 
 				if (res.isEmpty())
 					tv.setText("Please try again");
-				else
+				else {
 					tv.setText("Your Time: "
 							+ String.format("%.2f", (float) duration / 1000)
 							+ " Sec ");
 
-				if (score > 30 && score < 70) {
-					tv.setText(tv.getText() + "\n Needs Some Work");
-					tv.setTextColor(Color.YELLOW);
-					isgreen = 0;
-				} else if (score >= 70) {
-					tv.setText(tv.getText() + "\n GOOD !");
-					tv.setTextColor(Color.GREEN);
-					isgreen = 1;
-				} else if (score <= 30) {
-					tv.setText(tv.getText() + "\n Please Try Again");
-					tv.setTextColor(Color.RED);
-					isgreen = -1;
+					if (score > 30 && score < 70) {
+						tv.setText(tv.getText() + "\n Needs Some Work");
+						tv.setTextColor(Color.YELLOW);
+						isgreen = 0;
+					} else if (score >= 70) {
+						tv.setText(tv.getText() + "\n GOOD !");
+						tv.setTextColor(Color.GREEN);
+						isgreen = 1;
+					} else if (score <= 30) {
+						tv.setText(tv.getText() + "\n Please Try Again");
+						tv.setTextColor(Color.RED);
+						isgreen = -1;
+					}
 				}
 
 				// Get mintime for the current phrase
@@ -239,8 +248,7 @@ public class Asynctask extends AsyncTask<List<String>, Integer, String> {
 				}
 			});
 			t.start();
-		}
-		else{
+		} else {
 			tv = (TextView) act.findViewById(R.id.resulttext);
 			act.findViewById(R.id.resultwindow).setVisibility(View.VISIBLE);
 			besttime = (TextView) act.findViewById(R.id.besttime);
@@ -248,7 +256,8 @@ public class Asynctask extends AsyncTask<List<String>, Integer, String> {
 			tv.setVisibility(View.VISIBLE);
 			besttime.setVisibility(View.GONE);
 			leaderboard.setVisibility(View.GONE);
-			tv.setText("processing failed");}
+			tv.setText("processing failed");
+		}
 
 	}
 }

@@ -8,6 +8,15 @@
 package com.tt;
 
 public final class R {
+    public static final class anim {
+        public static final int fadein=0x7f040000;
+        public static final int fadeout=0x7f040001;
+        public static final int push_left_in=0x7f040002;
+        public static final int push_left_out=0x7f040003;
+        public static final int push_right_in=0x7f040004;
+        public static final int push_right_out=0x7f040005;
+        public static final int rotation=0x7f040006;
+    }
     public static final class attr {
         /**  Drawable used to draw the divider between tabs. 
          <p>Must be a reference to another resource, in the form "<code>@[+][<i>package</i>:]<i>type</i>:<i>name</i></code>"
@@ -40,9 +49,9 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
         public static final int tabStripRight=0x7f010003;
     }
     public static final class color {
-        public static final int black_overlay=0x7f050000;
-        public static final int mild_blue=0x7f050001;
-        public static final int transparent=0x7f050002;
+        public static final int black_overlay=0x7f060000;
+        public static final int mild_blue=0x7f060001;
+        public static final int transparent=0x7f060002;
     }
     public static final class dimen {
         /** 
@@ -50,8 +59,8 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
          screen margins) for sw720dp devices (e.g. 10" tablets) in landscape here.
     
          */
-        public static final int activity_horizontal_margin=0x7f060001;
-        public static final int tab_host_default_height=0x7f060000;
+        public static final int activity_horizontal_margin=0x7f070001;
+        public static final int tab_host_default_height=0x7f070000;
     }
     public static final class drawable {
         public static final int activated_background_holo_dark=0x7f020000;
@@ -201,57 +210,59 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
         public static final int textfield_disabled_holo_light=0x7f020090;
         public static final int textfield_focused_holo_dark=0x7f020091;
         public static final int textfield_focused_holo_light=0x7f020092;
-        public static final int tracklistfooter=0x7f020093;
-        public static final int twitter=0x7f020094;
-        public static final int yellow_status=0x7f020095;
+        public static final int title=0x7f020093;
+        public static final int tracklistfooter=0x7f020094;
+        public static final int twitter=0x7f020095;
+        public static final int yellow_status=0x7f020096;
     }
     public static final class id {
-        public static final int ImageView01=0x7f0a0017;
-        public static final int ImageView02=0x7f0a0015;
-        public static final int ImageView03=0x7f0a0019;
-        public static final int TTlist=0x7f0a0011;
-        public static final int TextView01=0x7f0a0018;
-        public static final int action_settings=0x7f0a002d;
-        public static final int ads=0x7f0a0000;
-        public static final int ads_layout=0x7f0a0005;
-        public static final int appheader=0x7f0a002b;
-        public static final int applogo=0x7f0a002c;
-        public static final int asrdlgtext=0x7f0a0002;
-        public static final int avatar=0x7f0a0020;
-        public static final int besttime=0x7f0a0010;
-        public static final int buttonnext=0x7f0a000b;
-        public static final int buttonprevious=0x7f0a000c;
-        public static final int caption=0x7f0a0016;
-        public static final int detailedtrack=0x7f0a0006;
-        public static final int facebook=0x7f0a0024;
-        public static final int footer_layout=0x7f0a001e;
-        public static final int google=0x7f0a0026;
-        public static final int header_layout=0x7f0a0003;
-        public static final int headertext=0x7f0a001c;
-        public static final int introtext=0x7f0a0012;
-        public static final int legend=0x7f0a0014;
-        public static final int levelprogress=0x7f0a0021;
-        public static final int listads=0x7f0a001b;
-        public static final int mail=0x7f0a0025;
-        public static final int navigationwindow=0x7f0a0008;
-        public static final int nextlevel=0x7f0a0023;
-        public static final int phrase=0x7f0a0007;
-        public static final int previouslevel=0x7f0a0022;
-        public static final int record=0x7f0a0009;
-        public static final int replay=0x7f0a000a;
-        public static final int resulttext=0x7f0a000e;
-        public static final int resultwindow=0x7f0a000d;
-        public static final int scoredetails=0x7f0a001f;
-        public static final int scorelist=0x7f0a001d;
-        public static final int textView2=0x7f0a001a;
-        public static final int trackphrase=0x7f0a0029;
-        public static final int trackstatus=0x7f0a0001;
-        public static final int ttgesture=0x7f0a0004;
-        public static final int ttname=0x7f0a002a;
-        public static final int tttracklist=0x7f0a0028;
-        public static final int twitter=0x7f0a0027;
-        public static final int username=0x7f0a0013;
-        public static final int viewscore=0x7f0a000f;
+        public static final int ImageView01=0x7f0b0017;
+        public static final int ImageView02=0x7f0b0015;
+        public static final int ImageView03=0x7f0b0019;
+        public static final int TTlist=0x7f0b0011;
+        public static final int TextView01=0x7f0b0018;
+        public static final int action_settings=0x7f0b002e;
+        public static final int ads=0x7f0b0000;
+        public static final int ads_layout=0x7f0b0005;
+        public static final int appheader=0x7f0b002b;
+        public static final int applogo=0x7f0b002c;
+        public static final int asrdlgtext=0x7f0b0002;
+        public static final int avatar=0x7f0b0020;
+        public static final int besttime=0x7f0b0010;
+        public static final int buttonnext=0x7f0b000b;
+        public static final int buttonprevious=0x7f0b000c;
+        public static final int caption=0x7f0b0016;
+        public static final int detailedtrack=0x7f0b0006;
+        public static final int facebook=0x7f0b0024;
+        public static final int footer_layout=0x7f0b001e;
+        public static final int google=0x7f0b0026;
+        public static final int header_layout=0x7f0b0003;
+        public static final int headertext=0x7f0b001c;
+        public static final int imageView1=0x7f0b002d;
+        public static final int introtext=0x7f0b0012;
+        public static final int legend=0x7f0b0014;
+        public static final int levelprogress=0x7f0b0021;
+        public static final int listads=0x7f0b001b;
+        public static final int mail=0x7f0b0025;
+        public static final int navigationwindow=0x7f0b0008;
+        public static final int nextlevel=0x7f0b0023;
+        public static final int phrase=0x7f0b0007;
+        public static final int previouslevel=0x7f0b0022;
+        public static final int record=0x7f0b0009;
+        public static final int replay=0x7f0b000a;
+        public static final int resulttext=0x7f0b000e;
+        public static final int resultwindow=0x7f0b000d;
+        public static final int scoredetails=0x7f0b001f;
+        public static final int scorelist=0x7f0b001d;
+        public static final int textView2=0x7f0b001a;
+        public static final int trackphrase=0x7f0b0029;
+        public static final int trackstatus=0x7f0b0001;
+        public static final int ttgesture=0x7f0b0004;
+        public static final int ttname=0x7f0b002a;
+        public static final int tttracklist=0x7f0b0028;
+        public static final int twitter=0x7f0b0027;
+        public static final int username=0x7f0b0013;
+        public static final int viewscore=0x7f0b000f;
     }
     public static final class layout {
         public static final int ads=0x7f030000;
@@ -271,19 +282,19 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
         public static final int ttheader=0x7f03000e;
     }
     public static final class menu {
-        public static final int home=0x7f090000;
+        public static final int home=0x7f0a0000;
     }
     public static final class raw {
-        public static final int gestures=0x7f040000;
+        public static final int gestures=0x7f050000;
     }
     public static final class string {
-        public static final int action_settings=0x7f070001;
-        public static final int app_name=0x7f070000;
-        public static final int dummy_button=0x7f070002;
-        public static final int empty=0x7f070003;
-        public static final int next=0x7f070005;
-        public static final int previous=0x7f070004;
-        public static final int welcometext=0x7f070006;
+        public static final int action_settings=0x7f080001;
+        public static final int app_name=0x7f080000;
+        public static final int dummy_button=0x7f080002;
+        public static final int empty=0x7f080003;
+        public static final int next=0x7f080005;
+        public static final int previous=0x7f080004;
+        public static final int welcometext=0x7f080006;
     }
     public static final class style {
         /** 
@@ -296,38 +307,38 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
             backward-compatibility can go here.
         
          */
-        public static final int AppBaseTheme=0x7f080000;
+        public static final int AppBaseTheme=0x7f090000;
         /**  Application theme. 
  All customizations that are NOT specific to a particular API-level can go here. 
          */
-        public static final int AppTheme=0x7f080001;
-        public static final int ButtonAppTheme=0x7f080009;
-        public static final int ButtonBar=0x7f080005;
-        public static final int ButtonBarButton=0x7f080006;
-        public static final int CheckBoxAppTheme=0x7f080008;
-        public static final int EditTextAppTheme=0x7f080007;
-        public static final int FullscreenTheme=0x7f080002;
-        public static final int HomepageTheme=0x7f080019;
-        public static final int ImageButtonAppTheme=0x7f08000a;
-        public static final int ListViewAppTheme=0x7f080014;
-        public static final int ListViewAppTheme_White=0x7f080015;
-        public static final int NumberPickerAppTheme=0x7f080017;
-        public static final int ProgressBarAppTheme=0x7f080010;
-        public static final int RatingBarAppTheme=0x7f080011;
-        public static final int RatingBarSmallAppTheme=0x7f080012;
-        public static final int SpinnerAppTheme=0x7f08000b;
-        public static final int SpinnerAppTheme_DropDown=0x7f08000c;
-        public static final int SpinnerDropDownItemAppTheme=0x7f08000d;
-        public static final int SpinnerItemAppTheme=0x7f080016;
-        public static final int TabAppTheme=0x7f08000e;
-        public static final int TabTextAppTheme=0x7f08000f;
-        public static final int TabWidgetAppTheme=0x7f080018;
-        public static final int ThemeDialogCustom=0x7f08001a;
-        public static final int ToggleAppTheme=0x7f080013;
-        public static final int TransparentExpandableListView=0x7f080004;
+        public static final int AppTheme=0x7f090001;
+        public static final int ButtonAppTheme=0x7f090009;
+        public static final int ButtonBar=0x7f090005;
+        public static final int ButtonBarButton=0x7f090006;
+        public static final int CheckBoxAppTheme=0x7f090008;
+        public static final int EditTextAppTheme=0x7f090007;
+        public static final int FullscreenTheme=0x7f090002;
+        public static final int HomepageTheme=0x7f090019;
+        public static final int ImageButtonAppTheme=0x7f09000a;
+        public static final int ListViewAppTheme=0x7f090014;
+        public static final int ListViewAppTheme_White=0x7f090015;
+        public static final int NumberPickerAppTheme=0x7f090017;
+        public static final int ProgressBarAppTheme=0x7f090010;
+        public static final int RatingBarAppTheme=0x7f090011;
+        public static final int RatingBarSmallAppTheme=0x7f090012;
+        public static final int SpinnerAppTheme=0x7f09000b;
+        public static final int SpinnerAppTheme_DropDown=0x7f09000c;
+        public static final int SpinnerDropDownItemAppTheme=0x7f09000d;
+        public static final int SpinnerItemAppTheme=0x7f090016;
+        public static final int TabAppTheme=0x7f09000e;
+        public static final int TabTextAppTheme=0x7f09000f;
+        public static final int TabWidgetAppTheme=0x7f090018;
+        public static final int ThemeDialogCustom=0x7f09001a;
+        public static final int ToggleAppTheme=0x7f090013;
+        public static final int TransparentExpandableListView=0x7f090004;
         /**   <item name="android:listSelector">@android:color/transparent</item> 
          */
-        public static final int TransparentListView=0x7f080003;
+        public static final int TransparentListView=0x7f090003;
     }
     public static final class styleable {
         /** Attributes that can be used with a TabWidget.

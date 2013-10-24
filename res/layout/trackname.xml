@@ -15,7 +15,7 @@
         android:onClick="showtracklist"
         android:text="Button"
         android:textColor="#FFFFFF"
-        android:textSize="22sp"
-        android:textStyle="bold" />
+        android:textSize="20sp"
+        android:textStyle="normal|italic" />
 
 </RelativeLayout>

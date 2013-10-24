@@ -150,4 +150,15 @@ public class Leaderboard extends Baseclass {
 		}
 	}*/
 	
+	@Override
+	public void onResume(){
+		super.onResume();
+		overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);	
+	}
+	@Override
+	public void onPause(){
+		super.onPause();
+		Baseclass.transition = true;
+		overridePendingTransition(R.anim.push_right_in, R.anim.push_right_out);
+	}
 }

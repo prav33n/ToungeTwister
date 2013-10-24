@@ -3,7 +3,7 @@
     android:id="@+id/appheader"
     android:layout_width="match_parent"
     android:layout_height="100dp"
-    android:background="@drawable/button_selected"
+    android:background="@drawable/button_default"
     android:gravity="center_vertical|center_horizontal"
     android:orientation="horizontal" >
 
@@ -15,17 +15,10 @@
         android:scaleType="fitCenter"
         android:src="@drawable/applogo" />
 
-    <TextView
-        android:id="@+id/caption"
-        android:layout_width="match_parent"
+    <ImageView
+        android:id="@+id/imageView1"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
-        android:gravity="center_horizontal"
-        android:text="Tongue Twisters \n Tournament"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textColor="#ffffff"
-        android:textSize="26sp"
-        android:textStyle="bold"
-        android:typeface="normal" />
+        android:src="@drawable/title" />
 
 </LinearLayout>

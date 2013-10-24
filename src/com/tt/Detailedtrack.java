@@ -35,12 +35,15 @@ import android.speech.tts.TextToSpeech;
 import android.speech.tts.TextToSpeech.OnInitListener;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListView;
@@ -57,7 +60,7 @@ public class Detailedtrack extends Baseclass implements OnInitListener,
 	TextView phrase, tv;
 	Cursor node, leader;
 	TextToSpeech mTts;
-	int mintime, isgreen, phraseid, attemptnumber = 1,position,nodeid;
+	int mintime, isgreen, phraseid, attemptnumber = 1,position,nodeid, keycode;
 	protected static final int RESULT_TEXT = 2;
 	boolean issoundavailable = false, processing = false;
 	float currenttime;
@@ -247,6 +250,10 @@ public class Detailedtrack extends Baseclass implements OnInitListener,
 					Toast.LENGTH_SHORT);
 			toast.setDuration(500);
 			toast.show();}
+		ScrollView movieContainer;
+		movieContainer = (ScrollView) findViewById(R.id.detailedtrack); // get scroll View
+		Animation anim = AnimationUtils.loadAnimation(this, R.anim.push_left_in); 
+		movieContainer.startAnimation(anim);
 		changetrack();
 		
 	}
@@ -259,6 +266,10 @@ public class Detailedtrack extends Baseclass implements OnInitListener,
 					Toast.LENGTH_SHORT);
 			toast.setDuration(500);
 			toast.show();		}
+		ScrollView movieContainer;
+		movieContainer = (ScrollView) findViewById(R.id.detailedtrack); // get scroll View
+		Animation anim = AnimationUtils.loadAnimation(this, R.anim.push_right_in); 
+		movieContainer.startAnimation(anim);
 		changetrack();
 	}
 
@@ -354,6 +365,9 @@ public class Detailedtrack extends Baseclass implements OnInitListener,
 		phrase.setText(currentphrase);
 		//Log.e("track data",""+node.getString(node.getColumnIndex("Phrase")));
 		getscores(node.getInt(node.getColumnIndex("_id")));
+		if(audioTrack != null && audioTrack.getState() == AudioTrack.STATE_INITIALIZED){
+			audioTrack.stop();
+			audioTrack.release();}
 		return true;
 	}
 
@@ -365,12 +379,31 @@ public class Detailedtrack extends Baseclass implements OnInitListener,
 			sr.destroy();
 		if(mTts != null )
 			mTts.shutdown();
-		if(audioTrack != null){
+		if(audioTrack != null && audioTrack.getState() == AudioTrack.STATE_INITIALIZED){
 		audioTrack.stop();
 		audioTrack.release();}
+		overridePendingTransition(R.anim.push_right_in, R.anim.push_right_out);
+		//overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
 
 	}
-
+	
+	@Override
+	public void onResume(){
+		super.onResume();
+		//overridePendingTransition(R.anim.push_right_in, R.anim.push_right_out);
+		Log.e("transition",""+Baseclass.transition);
+		if(!Baseclass.transition)
+			overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+		else
+			Baseclass.transition = false;
+	}
+	
+	 @Override
+	 public boolean onKeyDown(int keyCode, KeyEvent event) {
+		 this.keycode = keycode;
+	     return super.onKeyDown(keyCode, event);
+	 }
+	
 	@Override
 	public void onBeginningOfSpeech() {
 		// TODO Auto-generated method stub
