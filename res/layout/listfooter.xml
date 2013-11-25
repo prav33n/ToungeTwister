@@ -2,15 +2,14 @@
    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/button_default"
     android:gravity="center_vertical" >
     
      <LinearLayout
          android:id="@+id/legend"
          android:layout_width="match_parent"
-         android:layout_height="wrap_content"
-         android:background="@drawable/button_default"
+         android:layout_height="30dp"
          android:gravity="center_horizontal|center_vertical"
+         android:background="@drawable/button_default"
          android:orientation="horizontal"
          android:weightSum="1" >
 
@@ -19,13 +18,14 @@
         android:layout_width="25dp"
         android:layout_height="25dp"
         android:scaleType="fitCenter"
+        android:contentDescription="@string/empty"
         android:src="@drawable/green_status" />
 
     <TextView
         android:id="@+id/caption"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="- Good"
+        android:text="@string/good"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="#ffffff"
         android:textSize="13sp" />
@@ -35,13 +35,14 @@
         android:layout_width="25dp"
         android:layout_height="25dp"
         android:scaleType="fitCenter"
+        android:contentDescription="@string/empty"
         android:src="@drawable/yellow_status" />
 
     <TextView
         android:id="@+id/TextView01"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="- Needs Some Work"
+       android:text="@string/needsomework"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="#ffffff"
         android:textSize="13sp" />
@@ -51,28 +52,16 @@
         android:layout_width="25dp"
         android:layout_height="25dp"
         android:scaleType="fitCenter"
+        android:contentDescription="@string/empty"
         android:src="@drawable/red_status" />
 
     <TextView
         android:id="@+id/textView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="- Try Again"
+        android:text="@string/tryagain"
         android:textColor="#ffffff"
         android:textSize="13sp" />
 
 </LinearLayout>
-
-<LinearLayout
-    android:id="@+id/listads"
-    android:layout_width="match_parent"
-    android:layout_height="50dp"
-    android:layout_below="@id/legend"
-    android:background="@drawable/border"
-    android:orientation="vertical"
-    android:visibility="gone" >
-
-</LinearLayout>  
-       
-       
-    </RelativeLayout>
+</RelativeLayout>

@@ -13,9 +13,9 @@
         android:layout_centerHorizontal="true"
         android:layout_margin="5dp"
         android:onClick="showtracklist"
-        android:text="Button"
+        android:text="@string/empty"
         android:textColor="#FFFFFF"
         android:textSize="20sp"
-        android:textStyle="normal|italic" />
+        android:textStyle="normal" />
 
 </RelativeLayout>

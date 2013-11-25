@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -19,8 +20,8 @@ import android.gesture.Gesture;
 import android.gesture.GestureLibraries;
 import android.gesture.GestureLibrary;
 import android.gesture.GestureOverlayView;
-import android.gesture.Prediction;
 import android.gesture.GestureOverlayView.OnGesturePerformedListener;
+import android.gesture.Prediction;
 import android.graphics.Color;
 import android.media.AudioFormat;
 import android.media.AudioManager;
@@ -35,39 +36,39 @@ import android.speech.tts.TextToSpeech;
 import android.speech.tts.TextToSpeech.OnInitListener;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 /**
- * @author Raven
- * 
+ * @author Praveen Jelish View code to handle the individual track view and
+ *         handling the recoding, getting the result from google server.
  */
 public class Detailedtrack extends Baseclass implements OnInitListener,
-	RecognitionListener, OnGesturePerformedListener {
+		RecognitionListener, OnGesturePerformedListener {
 	TextView phrase, tv;
 	Cursor node, leader;
 	TextToSpeech mTts;
-	int mintime, isgreen, phraseid, attemptnumber = 1,position,nodeid, keycode;
+	int mintime, isgreen, phraseid, attemptnumber = 1, position, nodeid,
+			keycode;
 	protected static final int RESULT_TEXT = 2;
 	boolean issoundavailable = false, processing = false;
 	float currenttime;
 	AlertDialog.Builder alertbox;
 	AlertDialog dlg;
 	Dialog dialog;
-	String currentphrase;
+	String currentphrase, nodename;
 	ContentResolver cr;
 	Activity act;
 	ListView list;
@@ -80,57 +81,55 @@ public class Detailedtrack extends Baseclass implements OnInitListener,
 	ByteArrayOutputStream soundstream;
 	AudioManager mAudioManager;
 	AudioTrack audioTrack = null;
+	ImageButton share;
+	ScrollView container;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		
+
 		super.onCreate(savedInstanceState);
-		//final boolean customTitleSupported = requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
 		setContentView(R.layout.detailedtrack);
 		Bundle extras = getIntent().getExtras();
-		  TextView headertext = (TextView)findViewById(R.id.headertext);
-	        headertext.setText(extras.getString("nodename"));
+		nodename = extras.getString("nodename");
+		TextView headertext = (TextView) findViewById(R.id.headertext);
+		headertext.setText(nodename);
 		phraseid = extras.getInt("phraseid");
 		position = extras.getInt("position");
+		Baseclass.position = position;
 		nodeid = extras.getInt("nodeid");
+		// get the view for setting the ads and set the ads using the gogole
+		// admob sdk code
+		LinearLayout rel = (LinearLayout) findViewById(R.id.ads_layout);
+		container = (ScrollView) findViewById(R.id.detailedtrack); // get scroll
+																	// View
+		new Ad(rel, this);
 		cr = getContentResolver();
-		Log.e("TT phrase id",""+phraseid+"//"+position+"//"+nodeid);
-		ScrollView sv = (ScrollView) findViewById(R.id.detailedtrack);
+		// Log.e("TT phrase id",""+phraseid+"//"+position+"//"+nodeid);
 		GestureOverlayView gesture = (GestureOverlayView) findViewById(R.id.ttgesture);
 		gestureLib = GestureLibraries.fromRawResource(this, R.raw.gestures);
 		if (!gestureLib.load())
 			finish();
 		gesture.addOnGesturePerformedListener(this);
-		sv.requestDisallowInterceptTouchEvent(true);
+		container.requestDisallowInterceptTouchEvent(true);
 		act = this;
 		btnprevious = (ImageButton) findViewById(R.id.buttonprevious);
 		btnnext = (ImageButton) findViewById(R.id.buttonnext);
+		share = (ImageButton) findViewById(R.id.sharescore);
 		leaderboard = (Button) findViewById(R.id.viewscore);
-		replay = (Button)findViewById(R.id.replay);
-		replay.setText("Play");
+		replay = (Button) findViewById(R.id.replay);
+		replay.setText("Hint");
 		start_time = (long) 0;
 		end_time = (long) 0;
 		difference = (long) 0;
 		LayoutInflater inflater = getLayoutInflater();
-		ViewGroup listheader = (ViewGroup) inflater.inflate(
-				R.layout.listheader, list, false);		
+		inflater.inflate(R.layout.listheader, list, false);
 		phrase = (TextView) findViewById(R.id.phrase);
-		query = "select  _id,phrase,length,updated from phrase  where _id in (select nodeid from tracknode where trackid = "+ nodeid + ")";
+		query = "select  _id,phrase,length,updated from phrase  where _id in (select nodeid from tracknode where trackid = "
+				+ nodeid + ")";
 		node = cr.query(CONTENT_URI, projection, query, null, null);
+		// move the cursor to the last position in the Track list view
 		node.moveToPosition(position);
 		changetrack();
-	/*	query = "select  _id,phrase,length,updated from phrase  where _id = "
-				+ phraseid;
-		cr = getContentResolver();
-		node = cr.query(CONTENT_URI, projection, query, null, null);
-		node.moveToFirst();
-		currentphrase = node.getString(node.getColumnIndex("Phrase"));
-		phrase.setText(currentphrase);
-		node.close();
-		getscores(phraseid);
-		query = "select  _id,phrase,length,updated from phrase  where _id in (select nodeid from tracknode where trackid = "+ nodeid + ")";
-		node = cr.query(CONTENT_URI, projection, query, null, null);
-		node.moveToFirst();*/
-		
 	}
 
 	public void startspeech(View v) {
@@ -138,102 +137,99 @@ public class Detailedtrack extends Baseclass implements OnInitListener,
 				.getApplicationContext());
 		sr.setRecognitionListener(this);
 		Intent intents = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-		intents.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+		intents.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+				RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
 		intents.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, "com.tt");
-		intents.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS,5);
-		intents.putExtra(RecognizerIntent.EXTRA_LANGUAGE,  Locale.US.toString());
-		intents.putExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE,  Locale.US.toString()); 
-		intents.putExtra(RecognizerIntent.EXTRA_ONLY_RETURN_LANGUAGE_PREFERENCE,  Locale.US.toString());
-		intents.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_COMPLETE_SILENCE_LENGTH_MILLIS,2500);
-		intents.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_MINIMUM_LENGTH_MILLIS,phrase.length()*500);
-		//intents.putExtra(RecognizerIntent.ACTION_RECOGNIZE_SPEECH,RecognizerIntent.EXTRA_CONFIDENCE_SCORES);
+		intents.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 5);
+		intents.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.US.toString());
+		intents.putExtra(
+				RecognizerIntent.EXTRA_ONLY_RETURN_LANGUAGE_PREFERENCE,
+				Locale.US.toString());
+		intents.putExtra(
+				RecognizerIntent.EXTRA_SPEECH_INPUT_COMPLETE_SILENCE_LENGTH_MILLIS,
+				2500);
+		intents.putExtra(
+				RecognizerIntent.EXTRA_SPEECH_INPUT_MINIMUM_LENGTH_MILLIS,
+				phrase.length() * 500);
 		sr.startListening(intents);
+		// close timer if the user starts a new speech or moves to a new track
+		closetimer();
+		// create a dialog using a custom view
 		LayoutInflater factory = LayoutInflater.from(this);
 		final View textEntryView = factory.inflate(R.layout.asrdialog, null);
 		tv = (TextView) textEntryView.findViewById(R.id.asrdlgtext);
-	/*	alertbox = new AlertDialog.Builder(getApplicationContext());
-		alertbox.setView(textEntryView);
-		tv = (TextView) textEntryView.findViewById(R.id.asrdlgtext);
-		if (!isOnline())
-			tv.setText("No Internet Access");
-		else
-			tv.setText("Listening");
-		alertbox.setIcon(R.drawable.speech);
-		dlg = alertbox.create();
-		dlg.setCancelable(true);*/
+		// set the custom theme for the dialog
+		dialog = new Dialog(this, R.style.ThemeDialogCustom);
+		// remove the tile for the dialog
+		dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
 
-		dialog = new Dialog(this,R.style.ThemeDialogCustom);
-	    dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+		// you can move the dialog, so that is not centered
+		DisplayMetrics displaymetrics = new DisplayMetrics();
+		getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
+		int height = displaymetrics.heightPixels;
+		// int width = displaymetrics.widthPixels;
+		// Log.e("dialog display",""+width+"//"+height);
 
-	    //you can move the dialog, so that is not centered
-	    DisplayMetrics displaymetrics = new DisplayMetrics();
-	    getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
-	    int height = displaymetrics.heightPixels;
-	    int width = displaymetrics.widthPixels;
-	    Log.e("dialog display",""+width+"//"+height);
-	   // dialog.getWindow().getAttributes().y =350 ; //50 should be based on density */
-	    
-	    WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
-        lp.copyFrom(dialog.getWindow().getAttributes());
-        lp.y=(int) (height-200);
-        dialog.getWindow().setAttributes(lp);
-	    dialog.setContentView(textEntryView);
-	    dialog.setCancelable(true);
-	    //dialog.setOnCancelListener(cancelListener);
-	    dialog.show();
+		WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+		lp.copyFrom(dialog.getWindow().getAttributes());
+		lp.y = (height - 200);
+		dialog.getWindow().setAttributes(lp);
+		dialog.setContentView(textEntryView);
+		dialog.setCancelable(true);
 		issoundavailable = true;
 		soundstream = new ByteArrayOutputStream();
 	}
 
 	public void startplay(View v) {
-		// playback test
-		// Log.d("Audio","Playback Started"+issoundavailable);
-		if (issoundavailable && soundstream.size() > 0 ) {
-			
+		// code to play back the recorded sound or start TTS if the recording is
+		// not available
+
+		if (issoundavailable && soundstream.size() > 0) {
 			setVolumeControlStream(AudioManager.STREAM_MUSIC);
-			 mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+			mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 			// Request audio focus for playback
-			
 			int result = mAudioManager.requestAudioFocus(null,
-											// Use the music stream.
-			                                 AudioManager.STREAM_MUSIC,
-			                                 // Request permanent focus.
-			                                 AudioManager.AUDIOFOCUS_GAIN_TRANSIENT);
-			   
+			// Use the music stream.
+					AudioManager.STREAM_MUSIC,
+					// Request permanent focus.
+					AudioManager.AUDIOFOCUS_GAIN_TRANSIENT);
+
 			if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
-				Log.d("Audio",result+"Playback Started"+issoundavailable);
-			    // Start playback.
+				// Log.d("Audio",result+"Playback Started"+issoundavailable);
+				// Start playback.
 				try {
-		        	int maxVolume = mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
-		        	int oldVolume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
-		        	if (mAudioManager.isBluetoothA2dpOn()) {
-		        	    // Adjust output for Bluetooth.
-		        		maxVolume = maxVolume/2;
-		        	}  else if (mAudioManager.isWiredHeadsetOn()) {
-		        	    // Adjust output for headsets
-		        		maxVolume = maxVolume/2;
-		        	}         	
-		        	mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, maxVolume, AudioManager.FLAG_PLAY_SOUND);
-		        	audioTrack = new AudioTrack(
-							AudioManager.STREAM_MUSIC, 8000,
-							AudioFormat.CHANNEL_OUT_MONO,
-							AudioFormat.ENCODING_PCM_16BIT,
-							soundstream.size(), AudioTrack.MODE_STATIC);
-		        	audioTrack.flush();
-					audioTrack.write(soundstream.toByteArray(),0,soundstream.size());
-					Log.e("Audio status",""+audioTrack.getPlayState()+"//"+mAudioManager.isMusicActive());
-					if(audioTrack.getPlayState() == 1)
-					audioTrack.play();
-					Log.e("Audio status after",""+audioTrack.getPlayState()+"//"+mAudioManager.isMusicActive());
-					//mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, oldVolume, AudioManager.FLAG_PLAY_SOUND);
-					
+					int maxVolume = mAudioManager
+							.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+					mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+					if (mAudioManager.isBluetoothA2dpOn()) {
+						// Adjust output for Bluetooth.
+						maxVolume = maxVolume / 2;
+					} else if (mAudioManager.isWiredHeadsetOn()) {
+						// Adjust output for headsets
+						maxVolume = maxVolume / 2;
+					}
+					mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC,
+							maxVolume, AudioManager.FLAG_PLAY_SOUND);
+					audioTrack = new AudioTrack(AudioManager.STREAM_MUSIC,
+							8000, AudioFormat.CHANNEL_OUT_MONO,
+							AudioFormat.ENCODING_PCM_16BIT, soundstream.size(),
+							AudioTrack.MODE_STATIC);
+					audioTrack.flush();
+					audioTrack.write(soundstream.toByteArray(), 0,
+							soundstream.size());
+					Log.e("Audio status", "" + audioTrack.getPlayState() + "//"
+							+ mAudioManager.isMusicActive());
+					if (audioTrack.getPlayState() == 1)
+						audioTrack.play();
+					Log.e("Audio status after", "" + audioTrack.getPlayState()
+							+ "//" + mAudioManager.isMusicActive());
 				} catch (Exception e) {
 					e.printStackTrace();
-					Log.d("Audio", "Playback Failed");
-				}	
+					Toast toast = Toast.makeText(this, "Audio Error",
+							Toast.LENGTH_SHORT);
+					toast.show();
+				}
 			}
-			
-			
 		} else {
 			Intent textIntent = new Intent();
 			textIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
@@ -243,41 +239,101 @@ public class Detailedtrack extends Baseclass implements OnInitListener,
 	}
 
 	public void nexttrack(View v) {
-		if (!node.isLast()){
-			node.moveToNext(); }
-		else if (node.isLast()){
-			Toast toast = Toast.makeText(this, "Last Track selected",
+		if (!node.isLast()) {
+			node.moveToNext();
+			// move the position of the tracklist page by 1, used while
+			// returning to previous page.
+			Baseclass.position++;
+		} else if (node.isLast()) {
+			Toast toast = Toast.makeText(this, "Last Phrase Reached",
 					Toast.LENGTH_SHORT);
 			toast.setDuration(500);
-			toast.show();}
-		ScrollView movieContainer;
-		movieContainer = (ScrollView) findViewById(R.id.detailedtrack); // get scroll View
-		Animation anim = AnimationUtils.loadAnimation(this, R.anim.push_left_in); 
-		movieContainer.startAnimation(anim);
+			toast.show();
+		}
+		// animate the scroll view when the user changes the tracks
+		Animation anim = AnimationUtils
+				.loadAnimation(this, R.anim.push_left_in);
+		container.startAnimation(anim);
 		changetrack();
-		
+
 	}
 
 	public void previoustrack(View v) {
-		if (!node.isFirst()){
-			node.moveToPrevious(); }
-		else if (node.isFirst()){
-			Toast toast = Toast.makeText(this, "First Track selected",
+		if (!node.isFirst()) {
+			node.moveToPrevious();
+			// move the position of the tracklist page by 1, used while
+			// returning to previous page.
+			Baseclass.position--;
+		} else if (node.isFirst()) {
+			Toast toast = Toast.makeText(this, "First Phrase Reached",
 					Toast.LENGTH_SHORT);
 			toast.setDuration(500);
-			toast.show();		}
-		ScrollView movieContainer;
-		movieContainer = (ScrollView) findViewById(R.id.detailedtrack); // get scroll View
-		Animation anim = AnimationUtils.loadAnimation(this, R.anim.push_right_in); 
-		movieContainer.startAnimation(anim);
+			toast.show();
+		}
+		// animate the scroll view when the user changes the tracks
+		Animation anim = AnimationUtils.loadAnimation(this,
+				R.anim.push_right_in);
+		container.startAnimation(anim);
 		changetrack();
+
+	}
+
+	@Override
+	public void onGesturePerformed(GestureOverlayView overlay, Gesture gesture) {
+		// TODO Auto-generated method stub
+		// code to get the gestures from the view and identify the correct
+		// gestures, get the predictions array and iterate through the array.
+		ArrayList<Prediction> predictions = gestureLib.recognize(gesture);
+		// Log.e("gesture", "Logged" + predictions.toString());
+		for (Prediction prediction : predictions) {
+			if (prediction.score > 1.0) {
+				if (prediction.name.equalsIgnoreCase("baml")
+						|| prediction.name.equalsIgnoreCase("left")) {
+					// Log.e("gesture", "right");
+					if (!node.isFirst()) {
+						Baseclass.position--;
+						node.moveToPrevious();
+					} else if (node.isFirst()) {
+						Toast toast = Toast.makeText(this,
+								"First Phrase Reached", Toast.LENGTH_SHORT);
+						toast.setDuration(500);
+						toast.show();
+					}
+					changetrack();
+					Animation anim = AnimationUtils.loadAnimation(this,
+							R.anim.push_right_in);
+					container.startAnimation(anim);
+				}
+
+				else if (prediction.name.equalsIgnoreCase("bamr")
+						|| prediction.name.equalsIgnoreCase("right")) {
+					// Log.e("gesture", "left");
+					if (!node.isLast()) {
+						Baseclass.position++;
+						node.moveToNext();
+					} else if (node.isLast()) {
+						Toast toast = Toast.makeText(this,
+								"Last Phrase Reached", Toast.LENGTH_SHORT);
+						toast.setDuration(500);
+						toast.show();
+					}
+					changetrack();
+					Animation anim = AnimationUtils.loadAnimation(this,
+							R.anim.push_left_in);
+					container.startAnimation(anim);
+				}
+			}
+		}
+
 	}
 
 	public void viewscore(View V) {
+		// Switch to stats view
 		Intent i = new Intent(this, Leaderboard.class);
 		i.putExtra("mode", "scoreboard");
 		i.putExtra("NodeID", phraseid);
 		i.putExtra("currentime", currenttime);
+		i.putExtra("phrase", currentphrase);
 		startActivity(i);
 	}
 
@@ -304,15 +360,22 @@ public class Detailedtrack extends Baseclass implements OnInitListener,
 		super.onActivityResult(requestCode, resultCode, data);
 	}
 
+	@SuppressLint("InlinedApi")
 	@Override
 	public void onInit(int status) {
 		// TODO Auto-generated method stub
+		// code to initislise the text to speech feature
 		if (status == TextToSpeech.SUCCESS) {
+			// set the speeh language to English
 			if (mTts.isLanguageAvailable(Locale.US) == TextToSpeech.LANG_AVAILABLE)
 				mTts.setLanguage(Locale.US);
 			HashMap<String, String> myHashAlarm = new HashMap<String, String>();
 			myHashAlarm.put(TextToSpeech.Engine.KEY_PARAM_STREAM,
 					String.valueOf(AudioManager.STREAM_MUSIC));
+			myHashAlarm.put(TextToSpeech.Engine.KEY_PARAM_VOLUME,
+					String.valueOf(0.5));
+			// start the speech and flush the previous speech queue if already
+			// playing the sound
 			mTts.speak(currentphrase, TextToSpeech.QUEUE_FLUSH, myHashAlarm);
 		} else if (status == TextToSpeech.ERROR) {
 			Toast.makeText(this, "Sorry! Text To Speech failed...",
@@ -321,6 +384,7 @@ public class Detailedtrack extends Baseclass implements OnInitListener,
 	}
 
 	public boolean getscores(int id) {
+		// set the result view for track usng the stored data in attempts table
 		TextView besttime = (TextView) findViewById(R.id.besttime);
 		Cursor cur = cr.query(CONTENT_URI, projection,
 				"select * from attempt where NodeID = " + id
@@ -329,31 +393,29 @@ public class Detailedtrack extends Baseclass implements OnInitListener,
 			cur.moveToFirst();
 			if (cur.getInt(cur.getColumnIndex("isgreen")) == 1) {
 				besttime.setTextColor(Color.GREEN);
-				findViewById(R.id.viewscore).setVisibility(View.VISIBLE);
 			} else if (cur.getInt(cur.getColumnIndex("isgreen")) == 0) {
 				besttime.setTextColor(Color.YELLOW);
-				findViewById(R.id.viewscore).setVisibility(View.VISIBLE);
 			} else {
 				besttime.setTextColor(Color.RED);
-				findViewById(R.id.viewscore).setVisibility(View.VISIBLE);
 			}
 			besttime.setText("Your Best Time: "
 					+ String.format(
 							"%.2f",
 							(float) cur.getInt(cur.getColumnIndex("msecs")) / 1000)
 					+ " Sec");
-			findViewById(R.id.resulttext).setVisibility(View.GONE);
+			findViewById(R.id.viewscore).setVisibility(View.VISIBLE);
 			findViewById(R.id.resultwindow).setVisibility(View.VISIBLE);
 			besttime.setVisibility(View.VISIBLE);
+			findViewById(R.id.resulttext).setVisibility(View.GONE);
 			cur.close();
-		} else{
+		} else {
 			findViewById(R.id.viewscore).setVisibility(View.VISIBLE);
 			findViewById(R.id.resultwindow).setVisibility(View.VISIBLE);
 			findViewById(R.id.resulttext).setVisibility(View.GONE);
-			findViewById(R.id.besttime).setVisibility(View.GONE);
-			}
+			besttime.setVisibility(View.GONE);
+		}
 		return true;
-		
+
 	}
 
 	public boolean changetrack() {
@@ -362,12 +424,24 @@ public class Detailedtrack extends Baseclass implements OnInitListener,
 		soundstream = new ByteArrayOutputStream();
 		phraseid = node.getInt(node.getColumnIndex("_id"));
 		currentphrase = node.getString(node.getColumnIndex("Phrase"));
-		phrase.setText(currentphrase);
-		//Log.e("track data",""+node.getString(node.getColumnIndex("Phrase")));
+		Baseclass.nodeid = nodeid;
+		Baseclass.phraseid = phraseid;
+		Baseclass.nodename = nodename;
+		// Log.e("detailed phraseid",""+Baseclass.phraseid);
+		// trim the extra space between the next line charecter and the phrase
+		phrase.setText(currentphrase.trim());
+		share.setTag(currentphrase.trim());
+		// getspinner((Spinner)findViewById(R.id.topspinner),currentphrase,2);
+		// Log.e("track data",""+node.getString(node.getColumnIndex("Phrase")));
 		getscores(node.getInt(node.getColumnIndex("_id")));
-		if(audioTrack != null && audioTrack.getState() == AudioTrack.STATE_INITIALIZED){
+		if (audioTrack != null
+				&& audioTrack.getState() == AudioTrack.STATE_INITIALIZED) {
 			audioTrack.stop();
-			audioTrack.release();}
+			audioTrack.release();
+		}
+		// close the previous timer if the user navigates to a new track
+		closetimer();
+		replay.setText("Hint");
 		return true;
 	}
 
@@ -377,38 +451,32 @@ public class Detailedtrack extends Baseclass implements OnInitListener,
 		super.onPause();
 		if (sr != null)
 			sr.destroy();
-		if(mTts != null )
+		if (mTts != null)
 			mTts.shutdown();
-		if(audioTrack != null && audioTrack.getState() == AudioTrack.STATE_INITIALIZED){
-		audioTrack.stop();
-		audioTrack.release();}
+		if (audioTrack != null
+				&& audioTrack.getState() == AudioTrack.STATE_INITIALIZED) {
+			audioTrack.stop();
+			audioTrack.release();
+		}
 		overridePendingTransition(R.anim.push_right_in, R.anim.push_right_out);
-		//overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
 
 	}
-	
+
 	@Override
-	public void onResume(){
+	public void onResume() {
 		super.onResume();
-		//overridePendingTransition(R.anim.push_right_in, R.anim.push_right_out);
-		Log.e("transition",""+Baseclass.transition);
-		if(!Baseclass.transition)
+		// Log.e("transition",""+Baseclass.transition);
+		if (!Baseclass.transition)
 			overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
 		else
 			Baseclass.transition = false;
 	}
-	
-	 @Override
-	 public boolean onKeyDown(int keyCode, KeyEvent event) {
-		 this.keycode = keycode;
-	     return super.onKeyDown(keyCode, event);
-	 }
-	
+
 	@Override
 	public void onBeginningOfSpeech() {
 		// TODO Auto-generated method stub
+		// store the start time once the user starts recording
 		start_time = System.currentTimeMillis();
-
 	}
 
 	@Override
@@ -419,7 +487,7 @@ public class Detailedtrack extends Baseclass implements OnInitListener,
 			soundstream.write(buffer, 0, buffer.length);
 		} catch (Exception e) {
 			e.printStackTrace();
-			Log.e("sound track", "index outof bound");
+			// Log.e("sound track", "index outof bound");
 		}
 	}
 
@@ -434,23 +502,27 @@ public class Detailedtrack extends Baseclass implements OnInitListener,
 		processing = true;
 		/** CountDownTimer */
 		timer = new CountDownTimer(30000, 30000) {
+			@Override
 			public void onFinish() {
 				try {
-					if(dialog.isShowing()){
+					if (dialog.isShowing()) {
 						dialog.dismiss();
-						findViewById(R.id.resultwindow).setVisibility(View.VISIBLE);
-						TextView test = (TextView) findViewById(R.id.resulttext);
-						test.setVisibility(View.VISIBLE);
-						test.setText("Processing time exceeded \nPlease try Again");
+						findViewById(R.id.resultwindow).setVisibility(
+								View.VISIBLE);
+						TextView resulttext = (TextView) findViewById(R.id.resulttext);
+						resulttext.setVisibility(View.VISIBLE);
+						resulttext
+								.setText("Processing time exceeded \nPlease try Again");
 						findViewById(R.id.besttime).setVisibility(View.GONE);
 						findViewById(R.id.viewscore).setVisibility(View.GONE);
-					//	Button leaderboard = (Button)act.findViewById(R.id.viewscore);
+						// close the speech recognizer if the timer run out
 						sr.destroy();
-						}
+					}
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
+
 			@Override
 			public void onTick(long arg0) {
 				// TODO Auto-generated method stub
@@ -464,25 +536,31 @@ public class Detailedtrack extends Baseclass implements OnInitListener,
 	@Override
 	public void onError(int error) {
 		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void onEvent(int eventType, Bundle params) {
 		// TODO Auto-generated method stub
-
+		// Log.e("Speech event",""+eventType + params.toString());
 	}
 
 	@Override
 	public void onPartialResults(Bundle partialResults) {
 		// TODO Auto-generated method stub
-		Log.e("Partial result",""+partialResults.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION).toString());
-	
+		if ((partialResults != null)
+				&& partialResults
+						.containsKey("com.google.android.voicesearch.UNSUPPORTED_PARTIAL_RESULTS"))
+			Log.e("Partial result",
+					""
+							+ partialResults
+									.getStringArray("com.google.android.voicesearch.UNSUPPORTED_PARTIAL_RESULTS"));
+
 	}
 
 	@Override
 	public void onReadyForSpeech(Bundle params) {
 		// TODO Auto-generated method stub
+		// show the listening dailog when the recognizer is ready for listening
 		dialog.show();
 
 	}
@@ -491,19 +569,23 @@ public class Detailedtrack extends Baseclass implements OnInitListener,
 	@Override
 	public void onResults(Bundle results) {
 		// TODO Auto-generated method stub
-		// String str = new String();
+		// get the result from the speech recognizer
 		// Log.d(TAG, "onResults " + results);
 		if (results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
 				.isEmpty()) {
-			Log.e("ASR" + TAG, "onResults empty" + results.size());
+			// Log.e("ASR" + TAG, "onResults empty" + results.size());
 			dialog.dismiss();
-				} else {
-			Log.e("ASR" + TAG,	"results received"+ results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)+phraseid+"//"+difference);
-			new Asynctask(this, phraseid, difference).execute(results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION));
+		} else {
+			// Log.e("ASR" + TAG, "results received"+
+			// results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)+phraseid+"//"+difference);
+			// send the data to the async class for further processing
+			new Asynctask(this, phraseid, difference).execute(results
+					.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION));
+			// close the listening dialog on receving the server results
 			dialog.dismiss();
 		}
 		timer.cancel();
-		replay.setText("Play");
+		replay.setText("Playback");
 
 	}
 
@@ -514,44 +596,28 @@ public class Detailedtrack extends Baseclass implements OnInitListener,
 	}
 
 	public boolean isOnline() {
+		// check if the device is connected to a network, cannot detect if the
+		// device is connected to internet, only detect connection to a wireless
+		// or 3G connection
 		ConnectivityManager cm = (ConnectivityManager) act
 				.getSystemService(Context.CONNECTIVITY_SERVICE);
-
 		return cm.getActiveNetworkInfo() != null
 				&& cm.getActiveNetworkInfo().isConnectedOrConnecting();
 	}
 
 	@Override
 	public boolean dispatchTouchEvent(MotionEvent e) {
+		// dispatch the touch events for the getureview to other layers
 		return super.dispatchTouchEvent(e);
 	}
 
-	@Override
-	public void onGesturePerformed(GestureOverlayView overlay, Gesture gesture) {
-		// TODO Auto-generated method stub
-
-		ArrayList<Prediction> predictions = gestureLib.recognize(gesture);
-		Log.e("gesture", "Logged" + predictions.toString());
-		for (Prediction prediction : predictions) {
-			if (prediction.score > 1.0) {
-				if (prediction.name.equalsIgnoreCase("bamr")
-						|| prediction.name.equalsIgnoreCase("right")) {
-					Log.e("gesture", "right");
-					if (!node.isFirst())
-						node.moveToPrevious();
-					changetrack();
-				}
-
-				else if (prediction.name.equalsIgnoreCase("baml")
-						|| prediction.name.equalsIgnoreCase("left")) {
-					Log.e("gesture", "left");
-					if (!node.isLast())
-						node.moveToNext();
-					changetrack();
-				}
-			}
+	public boolean closetimer() {
+		// close timer if already inititalised
+		if (timer != null) {
+			timer.cancel();
+			return true;
 		}
+		return false;
 
 	}
-
 }

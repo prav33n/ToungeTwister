@@ -2,7 +2,7 @@
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/hdpi_bg"
+       android:background="@android:color/transparent"
         android:orientation="vertical" >
     <include
         android:id="@+id/header_layout"
@@ -16,16 +16,16 @@
             style="@style/ListViewAppTheme"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_above="@+id/footer_layout"
+            android:layout_above="@+id/ads_layout"
             android:layout_alignParentLeft="true"
             android:layout_below="@id/header_layout" >
 
         </ListView>
 
          <include
-             android:id="@+id/footer_layout"
-             android:layout_width="fill_parent"
-             android:layout_height="50dp"
+             android:id="@+id/ads_layout"
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
              android:layout_alignParentBottom="true"
              layout="@layout/ads" />
 

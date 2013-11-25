@@ -3,7 +3,7 @@
 <!-- Generated with http://android-holo-colors.com -->
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
-  <style name="AppTheme" parent="android:Theme.Black">
+    <style name="ApppageTheme" parent="android:Theme.Black">
       
     <item name="android:adjustViewBounds">true</item>
     
@@ -38,6 +38,12 @@
     <item name="android:listViewWhiteStyle">@style/ListViewAppTheme.White</item>
 
     <item name="android:spinnerItemStyle">@style/SpinnerItemAppTheme</item>
+        
+   <item name="android:windowBackground">@drawable/hdpi_bg</item>
+   
+   <item name="android:windowTitleSize">40dp</item>
+   
+   <item name="android:windowTitleStyle">@style/titleTextStyle</item>
 
   </style>
 
@@ -78,6 +84,8 @@
     <item name="android:spinnerItemStyle">@style/SpinnerItemAppTheme</item>
         
    <item name="android:windowTitleSize">100dp</item>
+   
+      <item name="android:windowBackground">@drawable/hdpi_bg</item>
 
   </style>
   
@@ -88,7 +96,7 @@
     <item name="android:windowAnimationStyle">@android:style/Animation.Dialog</item>
     <item name="android:windowBackground">@color/transparent</item>
     <item name="android:windowSoftInputMode">stateUnspecified|adjustPan</item>
-    <item name="android:colorBackgroundCacheHint">@null</item>
+    <item name="android:colorBackgroundCacheHint">@null</item>    
    </style>
   
 </resources>

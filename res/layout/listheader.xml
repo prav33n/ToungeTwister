@@ -1,19 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
+    android:layout_height="wrap_content"
+    android:background="@drawable/titlebg"
+    android:orientation="horizontal"
+    android:padding="5dp"
     android:weightSum="1" >
+
+    <ImageButton
+        android:id="@+id/sharescore"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="3dp"
+        android:layout_marginRight="0dp"
+        android:background="@drawable/sharebutton"
+        android:contentDescription="@string/empty"
+        android:onClick="sharedata"
+        android:scaleType="fitCenter"
+        android:src="@drawable/sharebutton" />
+
+    <!--
+         <Spinner
+        android:id="@+id/topspinner"
+        style="@style/SpinnerAppTheme.DropDown"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_alignParentTop="true"
+        android:layout_toLeftOf="@+id/sharescore"
+        android:visibility="gone" />
+    -->
+
+    <ImageView
+        android:id="@+id/back"
+        android:layout_width="20dp"
+        android:layout_height="30dp"
+        android:layout_alignBottom="@+id/headertext"
+        android:layout_alignParentLeft="true"
+        android:layout_alignTop="@+id/headertext"
+        android:clickable="true"
+        android:onClick="goback"
+        android:contentDescription="@string/empty"
+        android:src="@drawable/previous" />
 
     <TextView
         android:id="@+id/headertext"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/button_default"
-        android:gravity="center"
-        android:text="TOP PLAYERS"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_alignTop="@+id/sharescore"
+        android:layout_toLeftOf="@+id/sharescore"
+        android:layout_toRightOf="@+id/back"
+        android:background="@drawable/spinner_background_holo_dark"
+        android:clickable="true"
+        android:ellipsize="marquee"
+        android:gravity="center|left"
+        android:lines="1"
+        android:maxLines="1"
+        android:onClick="goback"
+        android:padding="5dp"
+        android:text="@string/leaderboard"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="#fff"
-        android:textSize="20sp" />
+        android:textSize="20sp"
+        android:visibility="visible" />
 
-</LinearLayout>
+</RelativeLayout>

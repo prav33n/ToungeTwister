@@ -105,119 +105,105 @@ class Statsadapter extends BaseAdapter implements ListAdapter {
 	
 }*/
 
-
 /**
  * 
  */
 package com.tt;
 
+import com.tt.R;
 import android.content.Context;
-import android.content.Intent;
 import android.database.Cursor;
-import android.support.v4.widget.CursorAdapter;
-import android.util.Log;
+import android.support.v4.widget.SimpleCursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
 /**
- * @author Raven
- *
+ * @author praveen jelish
+ * 
  */
-public class Statsadapter extends CursorAdapter implements ListAdapter {
+public class Statsadapter extends SimpleCursorAdapter implements ListAdapter {
 
-	/**
-	 * @param context
-	 * @param c
-	 * @param autoRequery
-	 */
 	Context con;
-	public Statsadapter(Context context, Cursor c, boolean autoRequery) {
-		super(context, c, autoRequery);
-		// TODO Auto-generated constructor stub
+	LayoutInflater inflator;
+
+	public Statsadapter(Context context, int layout, Cursor c, String[] from,
+			int[] to, int flags) {
+		super(context, layout, c, from, to, flags);
 		this.con = context;
+		inflator = LayoutInflater.from(context);
+		// TODO Auto-generated constructor stub
 	}
 
 	/**
-	 * @param context
-	 * @param c
-	 * @param flags
+	 * adapter for the TT list in home screen
 	 */
-	public Statsadapter(Context context, Cursor c, int flags) {
-		super(context, c, flags);
-		// TODO Auto-generated constructor stub
-	}
 
-	/* (non-Javadoc)
-	 * @see android.support.v4.widget.CursorAdapter#bindView(android.view.View, android.content.Context, android.database.Cursor)
-	 */
 	@Override
 	public void bindView(View v, Context context, Cursor cur) {
-		// TODO set values to the list view element using cursor data
-		TextView text =(TextView)v.findViewById(R.id.scoredetails);
-        v.findViewById(R.id.previouslevel).setVisibility(View.GONE);
-        v.findViewById(R.id.nextlevel).setVisibility(View.GONE);
-        v.findViewById(R.id.levelprogress).setVisibility(View.GONE);
-        ImageView img = (ImageView)v.findViewById(R.id.avatar);
-        if(cur.getPosition() ==0){
-        	img.setImageResource(R.drawable.img1);
-        }
-        else if(cur.getPosition() ==1){
-        	img.setImageResource(R.drawable.img2);
-        }
-        else if(cur.getPosition() ==2){
-        	img.setImageResource(R.drawable.img3);
-        }
-        else if(cur.getPosition() ==3){
-        	img.setImageResource(R.drawable.img4);
-        }
-        else if(cur.getPosition() ==4) {
-        	img.setImageResource(R.drawable.img5);
-        }
-        else if(cur.getPosition() ==5) {
-        	img.setImageResource(R.drawable.btn_check_holo_dark);
-        }
 
-        int totaltime,id =0;
-        String name;
-	    id = cur.getInt(cur.getColumnIndex("UserID"));
-		if( cur.getPosition()< 5){
-			name = cur.getString(cur.getColumnIndex("Name"));
-			totaltime = cur.getInt(cur.getColumnIndex("msecs"));
-			text.setText(name+"\nBest Time: "+String.format("%.2f", (float)totaltime/1000)+" Secs");
-			
-			if(id == Baseclass.userid ){v.setBackgroundResource(R.drawable.btn_bg_pressed);}
-			else
-				v.setBackgroundResource(R.color.transparent);
-		}   
-		else if(id == Baseclass.userid &&  cur.getPosition()== 5){
-			name = cur.getString(cur.getColumnIndex("Name"));
-			totaltime = cur.getInt(cur.getColumnIndex("msecs"));
-			text.setText(name+"\nBest Time: "+String.format("%.2f", (float)totaltime/1000)+" Secs");
-			v.setBackgroundResource(R.drawable.btn_bg_pressed);
+		// TODO set values to the list view element using cursor data
+		TextView text = (TextView) v.findViewById(R.id.scoredetails);
+		v.findViewById(R.id.previouslevel).setVisibility(View.GONE);
+		v.findViewById(R.id.nextlevel).setVisibility(View.GONE);
+		v.findViewById(R.id.levelprogress).setVisibility(View.GONE);
+		ImageView img = (ImageView) v.findViewById(R.id.avatar);
+		if (cur.getPosition() == 0) {
+			img.setImageResource(R.drawable.img1);
+		} else if (cur.getPosition() == 1) {
+			img.setImageResource(R.drawable.img2);
+		} else if (cur.getPosition() == 2) {
+			img.setImageResource(R.drawable.img3);
+		} else if (cur.getPosition() == 3) {
+			img.setImageResource(R.drawable.img4);
+		} else if (cur.getPosition() == 4) {
+			img.setImageResource(R.drawable.img5);
+		} else if (cur.getPosition() == 5) {
+			img.setImageResource(R.drawable.btn_check_holo_dark);
 		}
-		if(text.getText().equals("TextView")){
+
+		int totaltime, id = 0;
+		String name;
+		id = cur.getInt(cur.getColumnIndex("UserID"));
+		if (cur.getPosition() < 5) {
+			name = cur.getString(cur.getColumnIndex("Name"));
+			totaltime = cur.getInt(cur.getColumnIndex("msecs"));
+			text.setText(name + "\nBest Time: "
+					+ String.format("%.2f", (float) totaltime / 1000) + " Secs");
+
+			if (id == Baseclass.userid) {
+				v.setBackgroundResource(R.color.mild_blue);
+			} else
+				v.setBackgroundResource(R.color.transparent);
+		} else if (id == Baseclass.userid && cur.getPosition() == 5) {
+			name = cur.getString(cur.getColumnIndex("Name"));
+			totaltime = cur.getInt(cur.getColumnIndex("msecs"));
+			text.setText(name + "\nBest Time: "
+					+ String.format("%.2f", (float) totaltime / 1000) + " Secs");
+			v.setBackgroundResource(R.color.mild_blue);
+		}
+		if (text.getText().equals("Score view")) {
 			text.setVisibility(View.INVISIBLE);
 			img.setVisibility(View.INVISIBLE);
 		}
+
 	}
 
-	/* (non-Javadoc)
-	 * @see android.support.v4.widget.CursorAdapter#newView(android.content.Context, android.database.Cursor, android.view.ViewGroup)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * android.support.v4.widget.CursorAdapter#newView(android.content.Context,
+	 * android.database.Cursor, android.view.ViewGroup)
 	 */
 	@Override
 	public View newView(Context context, Cursor cur, ViewGroup parent) {
 		// TODO return the view to inflate
-		LayoutInflater inflater = LayoutInflater.from(context);
-		View v = inflater.inflate(R.layout.scoreview, parent, false);
+		View v = inflator.inflate(R.layout.scoreview, parent, false);
 		bindView(v, context, cur);
 		return v;
 	}
-	
 }
-

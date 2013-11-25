@@ -14,6 +14,7 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:scaleType="fitXY"
+        android:contentDescription="@string/empty"
         android:src="@drawable/red_status" />
 
     <TextView
@@ -25,7 +26,7 @@
         android:clickable="false"
         android:gravity="center|left"
         android:padding="3dp"
-        android:text="Medium Text"
+        android:text="@string/empty"
         android:textAppearance="?android:attr/textAppearanceMediumInverse"
         android:textColor="#ffffff" />
 

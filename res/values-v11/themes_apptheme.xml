@@ -3,25 +3,27 @@
 <!-- Generated with http://android-holo-colors.com -->
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
-  <style name="AppTheme" parent="android:Theme.Holo">
-
+    <style name="ApppageTheme" parent="android:Theme.Black">
+      
     <item name="android:adjustViewBounds">true</item>
     
     <item name="android:scaleType">fitCenter</item>
     
-    <item name="android:textSize">18sp</item>     
-    
-    <item name="android:editTextBackground">@drawable/edit_text_holo_dark</item>
+    <item name="android:textSize">18sp</item>          
+  
+    <item name="android:editTextStyle">@style/EditTextAppTheme</item>
 
-    <item name="android:listChoiceIndicatorMultiple">@drawable/btn_check_holo_dark</item>
+    <item name="android:checkboxStyle">@style/CheckBoxAppTheme</item>
 
     <item name="android:buttonStyle">@style/ButtonAppTheme</item>
 
     <item name="android:imageButtonStyle">@style/ImageButtonAppTheme</item>
 
-    <item name="android:dropDownSpinnerStyle">@style/SpinnerAppTheme</item>
+    <item name="android:spinnerStyle">@style/SpinnerAppTheme</item>
 
-    <item name="android:tabWidgetStyle">@style/TabWidgetAppTheme</item>
+    <item name="android:dropDownSpinnerStyle">@style/SpinnerAppTheme.DropDown</item>
+
+    <item name="android:spinnerDropDownItemStyle">@style/SpinnerDropDownItemAppTheme</item>
 
     <item name="android:progressBarStyleHorizontal">@style/ProgressBarAppTheme</item>
 
@@ -31,13 +33,70 @@
 
     <item name="android:buttonStyleToggle">@style/ToggleAppTheme</item>
 
-    <item name="android:listChoiceBackgroundIndicator">@drawable/list_selector_holo_dark</item>
+    <item name="android:listViewStyle">@style/ListViewAppTheme</item>
 
-    <item name="android:activatedBackgroundIndicator">@drawable/activated_background_holo_dark</item>
+    <item name="android:listViewWhiteStyle">@style/ListViewAppTheme.White</item>
 
-    <item name="android:fastScrollThumbDrawable">@drawable/fastscroll_thumb_holo</item>
-
+    <item name="android:spinnerItemStyle">@style/SpinnerItemAppTheme</item>
+     
+   <item name="android:windowBackground">@drawable/hdpi_bg</item>
+   
+   <item name="android:windowTitleSize">40dp</item>
+   
+   <item name="android:windowTitleStyle">@style/titleTextStyle</item>
 
   </style>
 
+    <style name="HomepageTheme" parent="android:Theme.Black">
+      
+    <item name="android:adjustViewBounds">true</item>
+    
+    <item name="android:scaleType">fitCenter</item>
+    
+    <item name="android:textSize">20sp</item>          
+  
+    <item name="android:editTextStyle">@style/EditTextAppTheme</item>
+
+    <item name="android:checkboxStyle">@style/CheckBoxAppTheme</item>
+
+    <item name="android:buttonStyle">@style/ButtonAppTheme</item>
+
+    <item name="android:imageButtonStyle">@style/ImageButtonAppTheme</item>
+
+    <item name="android:spinnerStyle">@style/SpinnerAppTheme</item>
+
+    <item name="android:dropDownSpinnerStyle">@style/SpinnerAppTheme.DropDown</item>
+
+    <item name="android:spinnerDropDownItemStyle">@style/SpinnerDropDownItemAppTheme</item>
+
+    <item name="android:progressBarStyleHorizontal">@style/ProgressBarAppTheme</item>
+
+    <item name="android:ratingBarStyle">@style/RatingBarAppTheme</item>
+
+    <item name="android:ratingBarStyleSmall">@style/RatingBarSmallAppTheme</item>
+
+    <item name="android:buttonStyleToggle">@style/ToggleAppTheme</item>
+
+    <item name="android:listViewStyle">@style/ListViewAppTheme</item>
+
+    <item name="android:listViewWhiteStyle">@style/ListViewAppTheme.White</item>
+
+    <item name="android:spinnerItemStyle">@style/SpinnerItemAppTheme</item>
+        
+   <item name="android:windowTitleSize">100dp</item>
+   
+   <item name="android:windowBackground">@drawable/hdpi_bg</item>
+
+  </style>
+  
+    <style name="ThemeDialogCustom">
+    <item name="android:windowFrame">@null</item>
+    <item name="android:windowIsFloating">true</item>
+    <item name="android:windowContentOverlay">@null</item>
+    <item name="android:windowAnimationStyle">@android:style/Animation.Dialog</item>
+    <item name="android:windowBackground">@color/transparent</item>
+    <item name="android:windowSoftInputMode">stateUnspecified|adjustPan</item>
+    <item name="android:colorBackgroundCacheHint">@null</item>    
+   </style>
+  
 </resources>

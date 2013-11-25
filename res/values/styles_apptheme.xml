@@ -26,14 +26,24 @@
   <style name="SpinnerAppTheme" parent="android:Widget.Spinner">
       <item name="android:background">@drawable/spinner_background_holo_dark</item>
       <item name="android:dropDownSelector">@drawable/list_selector_holo_dark</item>
+      <item name="android:textColor">#ffffff</item>
+      <item name="android:textSize">20sp</item>
+      <item name="android:textStyle">bold</item>
   </style>
 
   <style name="SpinnerAppTheme.DropDown">
       <item name="android:spinnerMode">dropdown</item>
+      <item name="android:textColor">#ffffff</item>
+      <item name="android:textSize">20sp</item>
+      <item name="android:textStyle">bold</item>
   </style>
 
   <style name="SpinnerDropDownItemAppTheme" parent="android:Widget.DropDownItem.Spinner">
-      <item name="android:checkMark">@drawable/btn_radio_holo_dark</item>
+      <item name="android:textColor">#ffffff</item>
+      <item name="android:textSize">22sp</item>
+      <item name="android:textStyle">bold</item>
+      <item name="android:background">@drawable/titlebg</item>
+      <item name="android:popupBackground">@null</item>
   </style>
   <style name="TabAppTheme">
       <item name="android:paddingLeft">16dip</item>
@@ -89,12 +99,21 @@
 
   <style name="SpinnerItemAppTheme" parent="android:TextAppearance.Widget.TextView.SpinnerItem">
       <item name="android:textColor">#ffffff</item>
+      <item name="android:textSize">22sp</item>
+      <item name="android:textStyle">bold</item>
+      <item name="android:background">@drawable/titlebg</item>
+      <item name="android:popupBackground">@null</item>
   </style>
 
   <style name="NumberPickerAppTheme">
-      <item name="android:orientation">vertical</item>">
-      <item name="android:fadingEdge">vertical</item>">
-      <item name="android:fadingEdgeLength">50dip</item>">
+      <item name="android:orientation">vertical</item>
+      <item name="android:fadingEdge">vertical</item>
+      <item name="android:fadingEdgeLength">50dip</item>
   </style>
-
+  
+  <style name="titleTextStyle" >
+    <item name="android:textSize">17sp</item>
+    <item name="android:textColor">#FFFFFF</item>
+</style>
+  
 </resources>

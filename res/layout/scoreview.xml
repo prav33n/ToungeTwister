@@ -14,9 +14,9 @@
         android:layout_alignTop="@+id/avatar"
         android:layout_marginLeft="16dp"
         android:layout_toRightOf="@+id/avatar"
-        android:text="TextView"
+        android:text="@string/scoredetails"
         android:textColor="#FFFFFF"
-        android:textSize="22dp" />
+        android:textSize="22sp" />
 
     <ImageView
         android:id="@+id/avatar"
@@ -26,6 +26,7 @@
         android:layout_alignParentTop="true"
         android:layout_centerVertical="true"
         android:layout_marginLeft="5dp"
+        android:contentDescription="@string/scoredetails"
         android:src="@color/transparent" />
 
     <ProgressBar
@@ -49,7 +50,7 @@
         android:layout_alignBottom="@+id/levelprogress"
         android:layout_marginLeft="5dp"
         android:layout_toRightOf="@+id/levelprogress"
-        android:text="level x"
+        android:text="@string/scoredetails"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:textColor="#000"
         android:textSize="14sp"
@@ -63,7 +64,7 @@
         android:layout_below="@id/scoredetails"
         android:layout_marginLeft="10dp"
         android:layout_marginTop="5dp"
-        android:text="level x"
+        android:text="@string/scoredetails"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:textColor="#000"
         android:textSize="14sp"

@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-
 <RelativeLayout xmlns:tools="http://schemas.android.com/tools"
      xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/hdpi_bg" >
+   android:background="@android:color/transparent" >
     <include
         android:id="@+id/header_layout"
         android:layout_width="fill_parent"
@@ -34,7 +32,7 @@
      android:layout_width="match_parent"
      android:layout_height="match_parent"
      android:layout_above="@+id/ads_layout"
-     android:background="@drawable/hdpi_bg" >
+     android:background="@color/transparent" >
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -48,12 +46,12 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="15dp"
-                android:gravity="center_horizontal"
+                android:layout_marginTop="10dp"
+                android:gravity="center_horizontal|left"
                 android:minLines="2"
                 android:scrollHorizontally="false"
                 android:singleLine="false"
-                android:text="Large Text"
+                android:text="@string/empty"
                 android:textColor="#ffffff"
                 android:textSize="20sp" />
 
@@ -75,7 +73,7 @@
                     android:layout_alignParentTop="true"
                     android:layout_centerHorizontal="true"
                     android:onClick="startspeech"
-                    android:text="Record"
+                    android:text="@string/record"
                     android:textColor="#FFFFFF"
                     android:visibility="visible" />
 
@@ -88,7 +86,7 @@
                     android:layout_below="@+id/record"
                     android:layout_marginTop="10dp"
                     android:onClick="startplay"
-                    android:text="Replay"
+                    android:text="@string/play"
                     android:textColor="#FFFFFF"
                     android:visibility="visible" />
 
@@ -102,6 +100,7 @@
                     android:layout_toRightOf="@+id/record"
                     android:onClick="nexttrack"
                     android:src="@drawable/next"
+                    android:contentDescription="@string/next"
                     android:visibility="visible" />
 
                 <ImageButton
@@ -114,6 +113,7 @@
                     android:layout_toLeftOf="@+id/record"
                     android:onClick="previoustrack"
                     android:src="@drawable/previous"
+                     android:contentDescription="@string/previous"
                     android:visibility="visible" />
 
             </RelativeLayout>
@@ -127,7 +127,7 @@
                 android:layout_marginLeft="3dp"
                 android:layout_marginRight="3dp"
                 android:layout_marginTop="10dp"
-                android:background="@drawable/resultwindowbg"
+                android:background="@drawable/border"
                 android:padding="20dp"
                 android:visibility="visible" >
 
@@ -138,7 +138,7 @@
                     android:layout_marginLeft="5dp"
                     android:gravity="center"
                     android:scrollHorizontally="false"
-                    android:text="TextView"
+                    android:text="@string/empty"
                     android:textColor="#fff"
                     android:textSize="20sp" />
 
@@ -153,7 +153,8 @@
                     android:minHeight="30dip"
                     android:onClick="viewscore"
                     android:padding="10dp"
-                    android:text="Leaderboard" />
+                    android:text="@string/leaderboard"
+                    android:textSize="16sp" />
 
                 <TextView
                     android:id="@+id/besttime"
@@ -163,7 +164,7 @@
                     android:layout_below="@+id/resulttext"
                     android:layout_marginTop="3dp"
                     android:gravity="center"
-                    android:text="TextView"
+                    android:text="@string/besttime"
                     android:textColor="#ffffff"
                     android:textSize="20sp" />
             </RelativeLayout>
