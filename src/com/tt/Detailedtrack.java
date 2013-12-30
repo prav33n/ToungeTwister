@@ -25,6 +25,7 @@ import android.gesture.Prediction;
 import android.graphics.Color;
 import android.media.AudioFormat;
 import android.media.AudioManager;
+import android.media.AudioRecord;
 import android.media.AudioTrack;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
@@ -50,6 +51,7 @@ import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
+import com.tongue.twister.R;
 
 /**
  * @author Praveen Jelish View code to handle the individual track view and
@@ -79,8 +81,9 @@ public class Detailedtrack extends Baseclass implements OnInitListener,
 	Button leaderboard, replay;
 	CountDownTimer timer;
 	ByteArrayOutputStream soundstream;
-	AudioManager mAudioManager;
 	AudioTrack audioTrack = null;
+	AudioRecord audiorecord;
+	AudioManager mAudioManager;
 	ImageButton share;
 	ScrollView container;
 
@@ -183,50 +186,43 @@ public class Detailedtrack extends Baseclass implements OnInitListener,
 	public void startplay(View v) {
 		// code to play back the recorded sound or start TTS if the recording is
 		// not available
-
+		Log.d("Audio", issoundavailable + "//" + soundstream.size());
 		if (issoundavailable && soundstream.size() > 0) {
-			setVolumeControlStream(AudioManager.STREAM_MUSIC);
+			setVolumeControlStream(AudioManager.STREAM_ALARM);
 			mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 			// Request audio focus for playback
 			int result = mAudioManager.requestAudioFocus(null,
-			// Use the music stream.
-					AudioManager.STREAM_MUSIC,
-					// Request permanent focus.
-					AudioManager.AUDIOFOCUS_GAIN_TRANSIENT);
+														// Use the music stream.
+														AudioManager.STREAM_ALARM,
+														// Request permanent focus.
+														AudioManager.AUDIOFOCUS_GAIN);
 
 			if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
-				// Log.d("Audio",result+"Playback Started"+issoundavailable);
+				Log.d("Audio", "Playback Started" + issoundavailable);
 				// Start playback.
 				try {
-					int maxVolume = mAudioManager
-							.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
-					mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+					int maxVolume = mAudioManager.getStreamMaxVolume(AudioManager.STREAM_ALARM);
+					mAudioManager.getStreamVolume(AudioManager.STREAM_ALARM);
 					if (mAudioManager.isBluetoothA2dpOn()) {
 						// Adjust output for Bluetooth.
 						maxVolume = maxVolume / 2;
-					} else if (mAudioManager.isWiredHeadsetOn()) {
+					} 
+					else if (mAudioManager.isWiredHeadsetOn()) 
+					{
 						// Adjust output for headsets
 						maxVolume = maxVolume / 2;
 					}
-					mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC,
-							maxVolume, AudioManager.FLAG_PLAY_SOUND);
-					audioTrack = new AudioTrack(AudioManager.STREAM_MUSIC,
-							8000, AudioFormat.CHANNEL_OUT_MONO,
-							AudioFormat.ENCODING_PCM_16BIT, soundstream.size(),
-							AudioTrack.MODE_STATIC);
+					mAudioManager.setStreamVolume(AudioManager.STREAM_ALARM, maxVolume, AudioManager.FLAG_PLAY_SOUND);
+					audioTrack = new AudioTrack(AudioManager.STREAM_ALARM,8000,AudioFormat.CHANNEL_OUT_MONO,AudioFormat.ENCODING_PCM_16BIT, soundstream.size(),AudioTrack.MODE_STATIC);
 					audioTrack.flush();
-					audioTrack.write(soundstream.toByteArray(), 0,
-							soundstream.size());
-					Log.e("Audio status", "" + audioTrack.getPlayState() + "//"
-							+ mAudioManager.isMusicActive());
+					audioTrack.write(soundstream.toByteArray(), 0,soundstream.size());
+					Log.e("Audio status", "" + audioTrack.getPlayState() + "//"+ mAudioManager.isMusicActive());
 					if (audioTrack.getPlayState() == 1)
 						audioTrack.play();
-					Log.e("Audio status after", "" + audioTrack.getPlayState()
-							+ "//" + mAudioManager.isMusicActive());
+					Log.e("Audio status after", "" + audioTrack.getPlayState()+ "//" + mAudioManager.isMusicActive());
 				} catch (Exception e) {
 					e.printStackTrace();
-					Toast toast = Toast.makeText(this, "Audio Error",
-							Toast.LENGTH_SHORT);
+					Toast toast = Toast.makeText(this, "Audio Error",Toast.LENGTH_SHORT);
 					toast.show();
 				}
 			}
@@ -245,8 +241,7 @@ public class Detailedtrack extends Baseclass implements OnInitListener,
 			// returning to previous page.
 			Baseclass.position++;
 		} else if (node.isLast()) {
-			Toast toast = Toast.makeText(this, "Last Phrase Reached",
-					Toast.LENGTH_SHORT);
+			Toast toast = Toast.makeText(this, "Last Phrase Reached",Toast.LENGTH_SHORT);
 			toast.setDuration(500);
 			toast.show();
 		}
@@ -265,8 +260,7 @@ public class Detailedtrack extends Baseclass implements OnInitListener,
 			// returning to previous page.
 			Baseclass.position--;
 		} else if (node.isFirst()) {
-			Toast toast = Toast.makeText(this, "First Phrase Reached",
-					Toast.LENGTH_SHORT);
+			Toast toast = Toast.makeText(this, "First Phrase Reached",Toast.LENGTH_SHORT);
 			toast.setDuration(500);
 			toast.show();
 		}
@@ -293,7 +287,8 @@ public class Detailedtrack extends Baseclass implements OnInitListener,
 					if (!node.isFirst()) {
 						Baseclass.position--;
 						node.moveToPrevious();
-					} else if (node.isFirst()) {
+					} 
+					else if (node.isFirst()) {
 						Toast toast = Toast.makeText(this,
 								"First Phrase Reached", Toast.LENGTH_SHORT);
 						toast.setDuration(500);
@@ -366,20 +361,18 @@ public class Detailedtrack extends Baseclass implements OnInitListener,
 		// TODO Auto-generated method stub
 		// code to initislise the text to speech feature
 		if (status == TextToSpeech.SUCCESS) {
-			// set the speeh language to English
+			// set the speech language to English
 			if (mTts.isLanguageAvailable(Locale.US) == TextToSpeech.LANG_AVAILABLE)
 				mTts.setLanguage(Locale.US);
 			HashMap<String, String> myHashAlarm = new HashMap<String, String>();
-			myHashAlarm.put(TextToSpeech.Engine.KEY_PARAM_STREAM,
-					String.valueOf(AudioManager.STREAM_MUSIC));
-			myHashAlarm.put(TextToSpeech.Engine.KEY_PARAM_VOLUME,
-					String.valueOf(0.5));
+			myHashAlarm.put(TextToSpeech.Engine.KEY_PARAM_STREAM,String.valueOf(AudioManager.STREAM_MUSIC));
+			myHashAlarm.put(TextToSpeech.Engine.KEY_PARAM_VOLUME,String.valueOf(0.5));
 			// start the speech and flush the previous speech queue if already
 			// playing the sound
 			mTts.speak(currentphrase, TextToSpeech.QUEUE_FLUSH, myHashAlarm);
-		} else if (status == TextToSpeech.ERROR) {
-			Toast.makeText(this, "Sorry! Text To Speech failed...",
-					Toast.LENGTH_LONG).show();
+		} 
+		else if (status == TextToSpeech.ERROR) {
+			Toast.makeText(this, "Sorry! Text To Speech failed...",	Toast.LENGTH_LONG).show();
 		}
 	}
 
@@ -413,6 +406,8 @@ public class Detailedtrack extends Baseclass implements OnInitListener,
 			findViewById(R.id.resultwindow).setVisibility(View.VISIBLE);
 			findViewById(R.id.resulttext).setVisibility(View.GONE);
 			besttime.setVisibility(View.GONE);
+			if (!cur.isClosed())
+				cur.close();
 		}
 		return true;
 
@@ -476,24 +471,27 @@ public class Detailedtrack extends Baseclass implements OnInitListener,
 	public void onBeginningOfSpeech() {
 		// TODO Auto-generated method stub
 		// store the start time once the user starts recording
+		Log.e("sound track", "speech start");
 		start_time = System.currentTimeMillis();
 	}
 
 	@Override
 	public void onBufferReceived(byte[] buffer) {
 		// TODO Auto-generated method stub
+		Log.e("sound track", "buffer received");
 		// get the byte array of the sound and write it to sound stream
 		try {
 			soundstream.write(buffer, 0, buffer.length);
 		} catch (Exception e) {
 			e.printStackTrace();
-			// Log.e("sound track", "index outof bound");
+			Log.e("sound track", "index outof bound");
 		}
 	}
 
 	@Override
 	public void onEndOfSpeech() {
 		// TODO Auto-generated method stub
+		Log.e("sound track", "speech end");
 		end_time = System.currentTimeMillis();
 		difference = end_time - start_time;
 		Log.e("diff", "" + difference);
@@ -507,12 +505,10 @@ public class Detailedtrack extends Baseclass implements OnInitListener,
 				try {
 					if (dialog.isShowing()) {
 						dialog.dismiss();
-						findViewById(R.id.resultwindow).setVisibility(
-								View.VISIBLE);
+						findViewById(R.id.resultwindow).setVisibility(View.VISIBLE);
 						TextView resulttext = (TextView) findViewById(R.id.resulttext);
 						resulttext.setVisibility(View.VISIBLE);
-						resulttext
-								.setText("Processing time exceeded \nPlease try Again");
+						resulttext.setText("Processing time exceeded \nPlease try Again");
 						findViewById(R.id.besttime).setVisibility(View.GONE);
 						findViewById(R.id.viewscore).setVisibility(View.GONE);
 						// close the speech recognizer if the timer run out
@@ -530,7 +526,6 @@ public class Detailedtrack extends Baseclass implements OnInitListener,
 			}
 		};
 		timer.start();
-
 	}
 
 	@Override
@@ -547,14 +542,6 @@ public class Detailedtrack extends Baseclass implements OnInitListener,
 	@Override
 	public void onPartialResults(Bundle partialResults) {
 		// TODO Auto-generated method stub
-		if ((partialResults != null)
-				&& partialResults
-						.containsKey("com.google.android.voicesearch.UNSUPPORTED_PARTIAL_RESULTS"))
-			Log.e("Partial result",
-					""
-							+ partialResults
-									.getStringArray("com.google.android.voicesearch.UNSUPPORTED_PARTIAL_RESULTS"));
-
 	}
 
 	@Override
@@ -571,16 +558,15 @@ public class Detailedtrack extends Baseclass implements OnInitListener,
 		// TODO Auto-generated method stub
 		// get the result from the speech recognizer
 		// Log.d(TAG, "onResults " + results);
-		if (results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
-				.isEmpty()) {
+		if (results.isEmpty()&& results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION).size() == 0) 
+		{
 			// Log.e("ASR" + TAG, "onResults empty" + results.size());
 			dialog.dismiss();
 		} else {
 			// Log.e("ASR" + TAG, "results received"+
 			// results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)+phraseid+"//"+difference);
 			// send the data to the async class for further processing
-			new Asynctask(this, phraseid, difference).execute(results
-					.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION));
+			new Asynctask(this, phraseid, difference).execute(results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION));
 			// close the listening dialog on receving the server results
 			dialog.dismiss();
 		}
@@ -599,10 +585,8 @@ public class Detailedtrack extends Baseclass implements OnInitListener,
 		// check if the device is connected to a network, cannot detect if the
 		// device is connected to internet, only detect connection to a wireless
 		// or 3G connection
-		ConnectivityManager cm = (ConnectivityManager) act
-				.getSystemService(Context.CONNECTIVITY_SERVICE);
-		return cm.getActiveNetworkInfo() != null
-				&& cm.getActiveNetworkInfo().isConnectedOrConnecting();
+		ConnectivityManager cm = (ConnectivityManager) act.getSystemService(Context.CONNECTIVITY_SERVICE);
+		return cm.getActiveNetworkInfo() != null&& cm.getActiveNetworkInfo().isConnectedOrConnecting();
 	}
 
 	@Override
@@ -618,6 +602,17 @@ public class Detailedtrack extends Baseclass implements OnInitListener,
 			return true;
 		}
 		return false;
+
+	}
+
+	void recordsound(int action) {
+		switch(action){
+		case 0:
+			break;
+		case 1:
+			
+			break;
+		}
 
 	}
 }

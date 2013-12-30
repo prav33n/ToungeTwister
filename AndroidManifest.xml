@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.tt"
+    package="com.tongue.twister"
     android:installLocation="preferExternal"
-    android:versionCode="1"
-    android:versionName="1.0" >
+    android:versionCode="2"
+    android:versionName="1.1" >
 
     <uses-sdk
         android:minSdkVersion="8"
@@ -65,7 +65,7 @@
         </activity>
 
         <provider
-            android:name=".Contentprovider"
+            android:name="com.tt.Contentprovider"
             android:authorities="com.TT.provider"
             android:exported="false"
             android:label="bamdataprovider"

@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +21,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import com.tongue.twister.R;
 
 public class Home extends Baseclass {
 	static ContentResolver cr;
@@ -48,8 +50,7 @@ public class Home extends Baseclass {
 		sync.execute(new String[] { "stats" });
 
 		final ContentResolver cr = getContentResolver();
-		Cursor cur = cr.query(Baseclass.CONTENT_URI, null,
-				"select * from user where _id=1", null, null);
+		Cursor cur = cr.query(Baseclass.CONTENT_URI, null,"select * from user where _id=1", null, null);
 		LayoutInflater factory = LayoutInflater.from(this);
 		final View textEntryView = factory.inflate(R.layout.introdialog, null);
 
@@ -74,6 +75,8 @@ public class Home extends Baseclass {
 			dlg = alertbox.create();
 			dlg.setCancelable(false);
 			dlg.show();
+			if(!cur.isClosed())
+				cur.close();
 		} else {
 			cur.moveToFirst();
 			Baseclass.userid = cur.getInt(cur.getColumnIndex("UserID"));
@@ -152,7 +155,7 @@ class Usercheck extends AsyncTask<String, Integer, String> {
 		}
 		status = Baseclass.streamtostring(Baseclass.httpclient(
 				"http://107.21.123.15/ttservices/updateuser.php", json));
-		if (status.equals("false") || username.isEmpty()) {
+		if (status.equals("false") || username.equals("null")|| TextUtils.isEmpty(username)) {
 			publishProgress(1);
 		} else {
 			ContentValues cv = new ContentValues();
@@ -172,7 +175,7 @@ class Usercheck extends AsyncTask<String, Integer, String> {
 		// This method runs on the UI thread, it receives progress updates
 		// from the background thread and publishes them to the status bar
 		// Home.alertbox.setTitle("User Name exist !");
-		if (username.isEmpty())
+		if (username.equals("null")||TextUtils.isEmpty(username))
 			Home.dlg.setTitle("User Name Cannot be empty ! \nPlease enter a name");
 		else
 			Home.dlg.setTitle("This username already exists. \nPlease choose a different name");

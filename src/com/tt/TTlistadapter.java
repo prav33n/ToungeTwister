@@ -3,7 +3,7 @@
  */
 package com.tt;
 
-import com.tt.R;
+import com.tongue.twister.R;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;

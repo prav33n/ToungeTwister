@@ -110,7 +110,7 @@ class Statsadapter extends BaseAdapter implements ListAdapter {
  */
 package com.tt;
 
-import com.tt.R;
+import com.tongue.twister.R;
 import android.content.Context;
 import android.database.Cursor;
 import android.support.v4.widget.SimpleCursorAdapter;

@@ -5,7 +5,7 @@ package com.tt;
 
 import org.json.JSONArray;
 
-import com.tt.R;
+import com.tongue.twister.R;
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.database.Cursor;

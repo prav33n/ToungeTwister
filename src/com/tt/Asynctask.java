@@ -32,6 +32,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.os.AsyncTask;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
@@ -39,6 +40,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import com.tongue.twister.R;
 
 /**
  * @author Raven
@@ -106,7 +108,7 @@ public class Asynctask extends AsyncTask<List<String>, Integer, String> {
 		Animation anim = AnimationUtils.loadAnimation(act, R.anim.fadein);
 		container.startAnimation(anim);
 
-		if (!result.equals("null") || !result.isEmpty()) {
+		if (!result.equals("null") || !TextUtils.isEmpty(result)) {
 			try {
 				jobj = new JSONObject(result);
 				json = json.put("todb", jobj);
@@ -120,8 +122,7 @@ public class Asynctask extends AsyncTask<List<String>, Integer, String> {
 				res = jobj.getString("asrphrase");
 				attempt = jobj.getString("attemptid");
 				score = (int) jobj.getDouble("score");
-
-				if (res.isEmpty())
+				if (res.equals("null")|| TextUtils.isEmpty(res))
 					tv.setText("Please try again");
 				else {
 					tv.setText("Your Time: "

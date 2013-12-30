@@ -22,15 +22,18 @@ import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.HTTP;
 import org.json.JSONObject;
 import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SimpleCursorAdapter;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 
@@ -166,14 +169,16 @@ public class Baseclass extends Activity implements
 		}
 	}
 
+	@TargetApi(Build.VERSION_CODES.GINGERBREAD)
 	public void sharedata(View v) {
 		Intent shareIntent = new Intent(android.content.Intent.ACTION_SEND);
 		// set the type
 		shareIntent.setType("text/plain");
 		// add a subject
-		String shareMessage = null;
-		if (v.getTag() != null)
-			shareMessage = "\"" + v.getTag() + "\"\n\n";
+		String shareMessage = "";
+		String str = (String) v.getTag();
+		if(str != null && !TextUtils.isEmpty(str))
+			shareMessage = "\"" + str + "\"\n\n";
 		shareMessage += "Check out Tongue Twisters Tournament: http://bitly.com/tonguetwisterstournament ";
 		shareIntent.putExtra(android.content.Intent.EXTRA_SUBJECT,
 				"Check out Tongue Twisters Tournament");
